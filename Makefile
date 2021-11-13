@@ -1,4 +1,4 @@
-.PHONY: test build create_db remove_db stop_db start_db
+.PHONY: test build mod create_db remove_db stop_db start_db
 
 test: 
 	go test -coverprofile=cover.out ./...
@@ -6,6 +6,10 @@ test:
 build:
 	go build -v app/main.go
 
+mod: 
+	go mod tidy
+	go mod download
+	
 #  thos command for control the databases
 create_db: 
 	cd db; 	echo "Create Database..."; \
