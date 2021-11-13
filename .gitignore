@@ -1,0 +1,5 @@
+# Output of the coverage test 
+*.out
+
+# Binary file output
+*.exe
