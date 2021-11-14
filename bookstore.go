@@ -1,5 +1,7 @@
 package bookstorebe
 
+import "context"
+
 // Entity
 type Publisher struct {
 	ID          int64  `json:"id"`
@@ -24,5 +26,31 @@ type Book struct {
 }
 
 // Repository
+type PublisherRepository interface {
+	// seller
+	GetPublishers(ctx context.Context) ([]Publisher, error)
+	GetPublisher(ctx context.Context, id int64) (Publisher, error)
+	CreatePublisher(ctx context.Context, publisher *Publisher) error
+	UpdatePublisher(ctx context.Context, id int64, publisher *Publisher) error
+	DeletePublisher(ctx context.Context, id int64) error
+}
+
+type CategoryRepository interface {
+	// seller
+	GetCategories(ctx context.Context) ([]Category, error)
+	GetCategory(ctx context.Context, id int64) (Category, error)
+	CreateCategory(ctx context.Context, category *Category) error
+	UpdateCategory(ctx context.Context, id int64, category *Category) error
+	DeleteCategory(ctx context.Context, id int64) error
+}
+
+type BookRepository interface {
+	// seller
+	GetBooks(ctx context.Context) ([]Book, error)
+	GetBook(ctx context.Context, id int64) (Book, error)
+	CreateBook(ctx context.Context, book *Book) error
+	UpdateBook(ctx context.Context, id int64, book *Book) error
+	DeleteBook(ctx context.Context, id int64) error
+}
 
 // Usecase
