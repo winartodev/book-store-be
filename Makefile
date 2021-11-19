@@ -1,4 +1,4 @@
-.PHONY: test build mod create_db remove_db stop_db start_db
+.PHONY: test build mod create_db remove_db stop_db start_db cover
 
 test: 
 	go test -coverprofile=cover.out ./...
@@ -9,6 +9,12 @@ build:
 mod: 
 	go mod tidy
 	go mod download
+
+cover: 
+	go tool cover -func=cover.out | grep total
+
+coverage: 
+	go tool cover -html=cover.out
 	
 #  thos command for control the databases
 create_db: 
