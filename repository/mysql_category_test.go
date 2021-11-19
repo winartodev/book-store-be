@@ -17,6 +17,7 @@ func TestGetCategories(t *testing.T) {
 		name     string
 		category []bookstorebe.Category
 		expRows  []bookstorebe.Category
+		query    string
 		isError  bool
 		err      error
 	}{
@@ -24,6 +25,7 @@ func TestGetCategories(t *testing.T) {
 			name:     "success",
 			category: []bookstorebe.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
 			expRows:  []bookstorebe.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
+			query:    "SELECT (.+) FROM category",
 			isError:  false,
 			err:      nil,
 		},
@@ -31,6 +33,15 @@ func TestGetCategories(t *testing.T) {
 			name:     "failed",
 			category: []bookstorebe.Category{},
 			expRows:  nil,
+			query:    "SELECT (.+) FROM category",
+			isError:  true,
+			err:      errors.New("Dummy Error"),
+		},
+		{
+			name:     "wrong query",
+			category: []bookstorebe.Category{},
+			expRows:  nil,
+			query:    "SELECT * FROM category",
 			isError:  true,
 			err:      errors.New("Dummy Error"),
 		},
@@ -50,9 +61,9 @@ func TestGetCategories(t *testing.T) {
 					rows.AddRow(&row.ID, &row.Name)
 				}
 
-				mock.ExpectQuery("SELECT (.+) FROM category").WillReturnRows(rows)
+				mock.ExpectQuery(test.query).WillReturnRows(rows)
 			} else {
-				mock.ExpectQuery("SELECT (.+) FROM category").WillReturnError(test.err)
+				mock.ExpectQuery(test.query).WillReturnError(test.err)
 			}
 
 			mysqlCategory := repository.NewMysqlCategory(db)
@@ -74,6 +85,7 @@ func TestGetCategory(t *testing.T) {
 		id       int64
 		category bookstorebe.Category
 		expRows  bookstorebe.Category
+		query    string
 		isError  bool
 		err      error
 	}{
@@ -82,6 +94,7 @@ func TestGetCategory(t *testing.T) {
 			id:       1,
 			category: bookstorebe.Category{ID: 1, Name: "Classics"},
 			expRows:  bookstorebe.Category{ID: 1, Name: "Classics"},
+			query:    "SELECT (.+) FROM category WHERE id=\\?",
 			isError:  false,
 			err:      nil,
 		},
@@ -90,6 +103,16 @@ func TestGetCategory(t *testing.T) {
 			id:       1,
 			category: bookstorebe.Category{},
 			expRows:  bookstorebe.Category{},
+			query:    "SELECT (.+) FROM category WHERE id=\\?",
+			isError:  true,
+			err:      errors.New("Dummy Error"),
+		},
+		{
+			name:     "wrong query",
+			id:       1,
+			category: bookstorebe.Category{},
+			expRows:  bookstorebe.Category{},
+			query:    "SELECT * FROM category WHERE id=?",
 			isError:  true,
 			err:      errors.New("Dummy Error"),
 		},
@@ -105,9 +128,9 @@ func TestGetCategory(t *testing.T) {
 
 			if !test.isError {
 				rows := sqlmock.NewRows([]string{"id", "name"}).AddRow(&test.category.ID, &test.category.Name)
-				mock.ExpectQuery("SELECT (.+) FROM category WHERE id=\\?").WillReturnRows(rows)
+				mock.ExpectQuery(test.query).WillReturnRows(rows)
 			} else {
-				mock.ExpectQuery("SELECT (.+) FROM category WHERE id=\\?").WillReturnError(test.err)
+				mock.ExpectQuery(test.query).WillReturnError(test.err)
 			}
 
 			mysqlCategory := repository.NewMysqlCategory(db)
@@ -127,18 +150,28 @@ func TestCreateCategory(t *testing.T) {
 	testCases := []struct {
 		name     string
 		category bookstorebe.Category
+		query    string
 		isError  bool
 		err      error
 	}{
 		{
 			name:     "success",
 			category: bookstorebe.Category{ID: 1, Name: "Classics"},
+			query:    "INSERT INTO category VALUES\\(NULL, \\?\\)",
 			isError:  false,
 			err:      nil,
 		},
 		{
 			name:     "failed",
 			category: bookstorebe.Category{},
+			query:    "INSERT INTO category VALUES\\(NULL, \\?\\)",
+			isError:  true,
+			err:      errors.New("Dummy Error"),
+		},
+		{
+			name:     "wrong query",
+			category: bookstorebe.Category{},
+			query:    "INSERT INTO category VALUES(NULL, ?)",
 			isError:  true,
 			err:      errors.New("Dummy Error"),
 		},
@@ -153,11 +186,11 @@ func TestCreateCategory(t *testing.T) {
 			defer db.Close()
 
 			if !test.isError {
-				mock.ExpectPrepare("INSERT INTO category VALUES\\(NULL, \\?\\)").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.category.Name).
 					WillReturnResult(sqlmock.NewResult(1, 1))
 			} else {
-				mock.ExpectPrepare("INSERT INTO category VALUES\\(NULL, \\?\\)").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.category.Name).
 					WillReturnError(test.err)
 			}
@@ -175,6 +208,7 @@ func TestUpdateCategory(t *testing.T) {
 		name     string
 		id       int64
 		category bookstorebe.Category
+		query    string
 		isError  bool
 		err      error
 	}{
@@ -182,6 +216,7 @@ func TestUpdateCategory(t *testing.T) {
 			name:     "success",
 			id:       1,
 			category: bookstorebe.Category{ID: 1, Name: "Classics"},
+			query:    "UPDATE category SET name=\\? WHERE id=\\?",
 			isError:  false,
 			err:      nil,
 		},
@@ -189,6 +224,15 @@ func TestUpdateCategory(t *testing.T) {
 			name:     "failed",
 			id:       1,
 			category: bookstorebe.Category{},
+			query:    "UPDATE category SET name=\\? WHERE id=\\?",
+			isError:  true,
+			err:      errors.New("Dummy Error"),
+		},
+		{
+			name:     "wrong query",
+			id:       1,
+			category: bookstorebe.Category{},
+			query:    "UPDATE category SET name=? WHERE id=?",
 			isError:  true,
 			err:      errors.New("Dummy Error"),
 		},
@@ -203,11 +247,11 @@ func TestUpdateCategory(t *testing.T) {
 			defer db.Close()
 
 			if !test.isError {
-				mock.ExpectPrepare("UPDATE category SET name=\\? WHERE id=\\?").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.category.Name, test.id).
 					WillReturnResult(sqlmock.NewResult(0, 1))
 			} else {
-				mock.ExpectPrepare("UPDATE category SET name=\\? WHERE id=\\?").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.category.Name, test.id).
 					WillReturnError(test.err)
 			}
@@ -224,18 +268,28 @@ func TestDeleteCategory(t *testing.T) {
 	testCases := []struct {
 		name    string
 		id      int64
+		query   string
 		isError bool
 		err     error
 	}{
 		{
 			name:    "success",
 			id:      1,
+			query:   "DELETE category WHERE id=\\?",
 			isError: false,
 			err:     nil,
 		},
 		{
 			name:    "falied",
 			id:      1,
+			query:   "DELETE category WHERE id=\\?",
+			isError: true,
+			err:     errors.New("Dummy Error"),
+		},
+		{
+			name:    "wrong query",
+			id:      1,
+			query:   "DELETE category WHERE ids=?",
 			isError: true,
 			err:     errors.New("Dummy Error"),
 		},
@@ -250,9 +304,9 @@ func TestDeleteCategory(t *testing.T) {
 			defer db.Close()
 
 			if !test.isError {
-				mock.ExpectPrepare("DELETE category WHERE id=\\?").ExpectExec().WithArgs(test.id).WillReturnResult(sqlmock.NewResult(0, 0))
+				mock.ExpectPrepare(test.query).ExpectExec().WithArgs(test.id).WillReturnResult(sqlmock.NewResult(0, 0))
 			} else {
-				mock.ExpectPrepare("DELETE category WHERE id=\\?").ExpectExec().WithArgs(test.id).WillReturnError(test.err)
+				mock.ExpectPrepare(test.query).ExpectExec().WithArgs(test.id).WillReturnError(test.err)
 			}
 
 			mysqlCategory := repository.NewMysqlCategory(db)

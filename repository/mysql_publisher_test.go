@@ -17,6 +17,7 @@ func TestGetPublisher(t *testing.T) {
 		name    string
 		rows    []bookstorebe.Publisher
 		expRows []bookstorebe.Publisher
+		query   string
 		isError bool
 		err     error
 	}{
@@ -24,12 +25,22 @@ func TestGetPublisher(t *testing.T) {
 			name:    "success",
 			rows:    []bookstorebe.Publisher{{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"}},
 			expRows: []bookstorebe.Publisher{{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"}},
+			query:   "SELECT (.+) FROM publisher",
 			isError: false,
 			err:     nil,
 		},
 		{
 			name:    "failed",
 			rows:    []bookstorebe.Publisher{},
+			query:   "SELECT (.+) FROM publisher",
+			expRows: nil,
+			isError: true,
+			err:     errors.New("Dummy Error"),
+		},
+		{
+			name:    "wrong query",
+			rows:    []bookstorebe.Publisher{},
+			query:   "SELECT * FROM publisher",
 			expRows: nil,
 			isError: true,
 			err:     errors.New("Dummy Error"),
@@ -49,9 +60,9 @@ func TestGetPublisher(t *testing.T) {
 				for _, row := range test.rows {
 					rows.AddRow(row.ID, row.Name, row.Address, row.PhoneNumber)
 				}
-				mock.ExpectQuery("SELECT (.+) FROM publisher").WillReturnRows(rows)
+				mock.ExpectQuery(test.query).WillReturnRows(rows)
 			} else {
-				mock.ExpectQuery("SELECT (.+) FROM publisher").WillReturnError(test.err)
+				mock.ExpectQuery(test.query).WillReturnError(test.err)
 			}
 
 			mysqlPublisher := repository.NewMysqlPublisher(db)
@@ -76,6 +87,7 @@ func TestGetPublishers(t *testing.T) {
 		id      int64
 		row     bookstorebe.Publisher
 		expRows bookstorebe.Publisher
+		query   string
 		isError bool
 		err     error
 	}{
@@ -84,6 +96,7 @@ func TestGetPublishers(t *testing.T) {
 			id:      1,
 			row:     bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
 			expRows: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			query:   "SELECT (.+) FROM publisher WHERE id=\\?",
 			isError: false,
 			err:     nil,
 		},
@@ -92,6 +105,16 @@ func TestGetPublishers(t *testing.T) {
 			id:      3,
 			row:     bookstorebe.Publisher{},
 			expRows: bookstorebe.Publisher{},
+			query:   "SELECT (.+) FROM publisher WHERE id=\\?",
+			isError: true,
+			err:     errors.New("Dummy Error"),
+		},
+		{
+			name:    "wrong query",
+			id:      3,
+			row:     bookstorebe.Publisher{},
+			expRows: bookstorebe.Publisher{},
+			query:   "SELECT * FROM publisher WHERE id=?",
 			isError: true,
 			err:     errors.New("Dummy Error"),
 		},
@@ -107,9 +130,9 @@ func TestGetPublishers(t *testing.T) {
 
 			if !test.isError {
 				rows := sqlmock.NewRows([]string{"id", "name", "address", "phone_number"}).AddRow(&test.row.ID, &test.row.Name, &test.row.Address, &test.row.PhoneNumber)
-				mock.ExpectQuery("SELECT (.+) FROM publisher WHERE id=\\?").WillReturnRows(rows)
+				mock.ExpectQuery(test.query).WillReturnRows(rows)
 			} else {
-				mock.ExpectQuery("SELECT (.+) FROM publisher WHERE id=\\?").WillReturnError(test.err)
+				mock.ExpectQuery(test.query).WillReturnError(test.err)
 			}
 
 			mysqlPublisher := repository.NewMysqlPublisher(db)
@@ -131,18 +154,28 @@ func TestCreatePublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
 		publisher bookstorebe.Publisher
+		query     string
 		isError   bool
 		err       error
 	}{
 		{
 			name:      "success",
 			publisher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			query:     "INSERT INTO publisher VALUES\\(NULL, \\?, \\?, \\?\\)",
 			isError:   false,
 			err:       nil,
 		},
 		{
 			name:      "failed",
 			publisher: bookstorebe.Publisher{},
+			query:     "INSERT INTO publisher VALUES\\(NULL, \\?, \\?, \\?\\)",
+			isError:   true,
+			err:       errors.New("Dummy Error"),
+		},
+		{
+			name:      "wrong query",
+			publisher: bookstorebe.Publisher{},
+			query:     "INSERT INTO publisher VALUES(NULL, ?, ?, ?)",
 			isError:   true,
 			err:       errors.New("Dummy Error"),
 		},
@@ -157,11 +190,11 @@ func TestCreatePublisher(t *testing.T) {
 			defer db.Close()
 
 			if !test.isError {
-				mock.ExpectPrepare("INSERT INTO publisher VALUES\\(NULL, \\?, \\?, \\?\\)").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.publisher.Name, &test.publisher.Address, &test.publisher.PhoneNumber).
 					WillReturnResult(sqlmock.NewResult(0, 1))
 			} else {
-				mock.ExpectPrepare("INSERT INTO publisher VALUES\\(NULL, \\?, \\?, \\?\\)").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.publisher.Name, &test.publisher.Address, &test.publisher.PhoneNumber).
 					WillReturnError(test.err)
 			}
@@ -179,6 +212,7 @@ func TestUpdatePublisher(t *testing.T) {
 		name      string
 		id        int64
 		publisher bookstorebe.Publisher
+		query     string
 		isError   bool
 		err       error
 	}{
@@ -186,6 +220,7 @@ func TestUpdatePublisher(t *testing.T) {
 			name:      "success",
 			id:        1,
 			publisher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			query:     "UPDATE publisher SET name=\\?, address=\\?, phone_number=\\? WHERE id=\\?",
 			isError:   false,
 			err:       nil,
 		},
@@ -193,6 +228,15 @@ func TestUpdatePublisher(t *testing.T) {
 			name:      "failed",
 			id:        1,
 			publisher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			query:     "UPDATE publisher SET name=\\?, address=\\?, phone_number=\\? WHERE id=\\?",
+			isError:   true,
+			err:       errors.New("Dummy Error"),
+		},
+		{
+			name:      "wrong query",
+			id:        1,
+			publisher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			query:     "UPDATE publisher SET name=?, address=?, phone_number=? WHERE id=?",
 			isError:   true,
 			err:       errors.New("Dummy Error"),
 		},
@@ -207,11 +251,11 @@ func TestUpdatePublisher(t *testing.T) {
 			defer db.Close()
 
 			if !test.isError {
-				mock.ExpectPrepare("UPDATE publisher SET name=\\?, address=\\?, phone_number=\\? WHERE id=\\?").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.publisher.Name, &test.publisher.Address, &test.publisher.PhoneNumber, test.id).
 					WillReturnResult(sqlmock.NewResult(0, 0))
 			} else {
-				mock.ExpectPrepare("UPDATE publisher SET name=\\?, address=\\?, phone_number=\\? WHERE id=\\?").
+				mock.ExpectPrepare(test.query).
 					ExpectExec().WithArgs(&test.publisher.Name, &test.publisher.Address, &test.publisher.PhoneNumber, test.id).
 					WillReturnError(test.err)
 			}
@@ -228,18 +272,28 @@ func TestDeletePublishetr(t *testing.T) {
 	testCases := []struct {
 		name    string
 		id      int64
+		query   string
 		isError bool
 		err     error
 	}{
 		{
 			name:    "success",
 			id:      1,
+			query:   "DELETE publisher WHERE id=\\?",
 			isError: false,
 			err:     nil,
 		},
 		{
 			name:    "failed",
 			id:      1,
+			query:   "DELETE publisher WHERE id=\\?",
+			isError: true,
+			err:     errors.New("Dummy Error"),
+		},
+		{
+			name:    "wrong query",
+			id:      1,
+			query:   "DELETE publisher WHERE ids=?",
 			isError: true,
 			err:     errors.New("Dummy Error"),
 		},
@@ -254,9 +308,9 @@ func TestDeletePublishetr(t *testing.T) {
 			defer db.Close()
 
 			if !test.isError {
-				mock.ExpectPrepare("DELETE publisher WHERE id=\\?").ExpectExec().WithArgs(test.id).WillReturnResult(sqlmock.NewResult(0, 0))
+				mock.ExpectPrepare(test.query).ExpectExec().WithArgs(test.id).WillReturnResult(sqlmock.NewResult(0, 0))
 			} else {
-				mock.ExpectPrepare("DELETE publisher WHERE id=\\?").ExpectExec().WithArgs(test.id).WillReturnError(test.err)
+				mock.ExpectPrepare(test.query).ExpectExec().WithArgs(test.id).WillReturnError(test.err)
 			}
 
 			mysqlPublisher := repository.NewMysqlPublisher(db)
