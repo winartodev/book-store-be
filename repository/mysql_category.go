@@ -41,6 +41,9 @@ func (mc *mysqlCategory) GetCategory(ctx context.Context, id int64) (bookstorebe
 
 	err := mc.DB.QueryRow("SELECT * FROM category WHERE id=?", id).Scan(&category.ID, &category.Name)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return bookstorebe.Category{}, nil
+		}
 		return bookstorebe.Category{}, err
 	}
 

@@ -108,6 +108,15 @@ func TestGetCategory(t *testing.T) {
 			err:      errors.New("Dummy Error"),
 		},
 		{
+			name:     "row not found",
+			id:       1,
+			category: bookstorebe.Category{},
+			expRows:  bookstorebe.Category{},
+			query:    "SELECT (.+) FROM category WHERE id=\\?",
+			isError:  true,
+			err:      errors.New("sql: no rows in result set"),
+		},
+		{
 			name:     "wrong query",
 			id:       1,
 			category: bookstorebe.Category{},
