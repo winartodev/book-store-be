@@ -1,4 +1,7 @@
-.PHONY: test build mod create_db remove_db stop_db start_db cover
+.PHONY: test build mod create_db remove_db stop_db start_db cover coverage run
+
+run: 
+	go run ./...
 
 test: 
 	go test -coverprofile=cover.out ./...
@@ -16,14 +19,14 @@ cover:
 coverage: 
 	go tool cover -html=cover.out
 	
-#  thos command for control the databases
+#  this command for control the databases
 create_db: 
 	cd db; 	echo "Create Database..."; \
 	docker-compose up -d
 
 remove_db:
 	cd db; echo "Database Down..."; \
-	docker-compose down
+	docker-compose down -v
 
 stop_db:
 	cd db; echo "Database Stopped"; \
