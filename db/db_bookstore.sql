@@ -53,8 +53,6 @@ CREATE TABLE IF NOT EXISTS `db_bookstore`.`book` (
   `year_of_publication` VARCHAR(4) NULL DEFAULT NULL,
   `stock` INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `FK_PUBLISHER_ID_idx` (`publisher_id` ASC) VISIBLE,
-  INDEX `FK_CATEGORY_ID_idx` (`category_id` ASC) VISIBLE,
   CONSTRAINT `FK_CATEGORY_ID`
     FOREIGN KEY (`category_id`)
     REFERENCES `db_bookstore`.`category` (`id`)
