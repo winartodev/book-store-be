@@ -21,7 +21,6 @@ func (mp *mysqlPublisher) GetPublishers(ctx context.Context) ([]bookstorebe.Publ
 	if err != nil {
 		return nil, err
 	}
-	defer mp.DB.Close()
 
 	for rows.Next() {
 		var publisher bookstorebe.Publisher
@@ -42,6 +41,9 @@ func (mp *mysqlPublisher) GetPublisher(ctx context.Context, id int64) (bookstore
 
 	err := mp.DB.QueryRow("SELECT * FROM publisher WHERE id=?", id).Scan(&publisher.ID, &publisher.Name, &publisher.Address, &publisher.PhoneNumber)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return bookstorebe.Publisher{}, nil
+		}
 		return bookstorebe.Publisher{}, err
 	}
 
