@@ -41,6 +41,9 @@ func (mb *mysqlBook) GetBook(ctx context.Context, id int64) (bookstorebe.Book, e
 
 	err := mb.DB.QueryRow("SELECT * FROM book WHERE id=?", id).Scan(&book.ID, &book.PublisherID, &book.CategoryID, &book.Title, &book.Author, &book.Publication, &book.Stock)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return bookstorebe.Book{}, nil
+		}
 		return bookstorebe.Book{}, err
 	}
 
