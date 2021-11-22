@@ -45,7 +45,7 @@ func (h *CategoryHandler) GetCategories(w http.ResponseWriter, r *http.Request, 
 	}
 
 	if len(data) == 0 {
-		response.SuccessResponse(w, http.StatusOK, "book is empty")
+		response.SuccessResponse(w, http.StatusOK, "Category is empty")
 		return
 	}
 
