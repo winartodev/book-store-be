@@ -41,6 +41,9 @@ func (mc *mysqlCategory) GetCategory(ctx context.Context, id int64) (bookstorebe
 
 	err := mc.DB.QueryRow("SELECT * FROM category WHERE id=?", id).Scan(&category.ID, &category.Name)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return bookstorebe.Category{}, nil
+		}
 		return bookstorebe.Category{}, err
 	}
 
@@ -80,7 +83,7 @@ func (mc *mysqlCategory) UpdateCategory(ctx context.Context, id int64, category 
 }
 
 func (mc *mysqlCategory) DeleteCategory(ctx context.Context, id int64) error {
-	stmt, err := mc.DB.Prepare("DELETE category WHERE id=?")
+	stmt, err := mc.DB.Prepare("DELETE FROM category WHERE id=?")
 	if err != nil {
 		return err
 	}

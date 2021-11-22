@@ -80,7 +80,7 @@ func (mb *mysqlBook) UpdateBook(ctx context.Context, id int64, book *bookstorebe
 }
 
 func (mb *mysqlBook) DeleteBook(ctx context.Context, id int64) error {
-	stmt, err := mb.DB.Prepare("DELETE book WHERE id=?")
+	stmt, err := mb.DB.Prepare("DELETE FROM book WHERE id=?")
 	if err != nil {
 		return err
 	}

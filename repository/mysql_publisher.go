@@ -81,7 +81,7 @@ func (mp *mysqlPublisher) UpdatePublisher(ctx context.Context, id int64, publish
 }
 
 func (mp *mysqlPublisher) DeletePublisher(ctx context.Context, id int64) error {
-	stmt, err := mp.DB.Prepare("DELETE publisher WHERE id=?")
+	stmt, err := mp.DB.Prepare("DELETE FROM publisher WHERE id=?")
 	if err != nil {
 		return err
 	}
