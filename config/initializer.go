@@ -39,7 +39,11 @@ func Serve() {
 	categoryUsecase := usecase.NewCategoryUsecase(&usecase.CategoryUsecase{CategoryRepo: categoryRepo})
 	categoryHander := delivery.NewCategoryHandler(categoryUsecase)
 
-	h := handler.NewHandler(&categoryHander)
+	publisherRepo := repository.NewMysqlPublisher(db)
+	publisherUsecase := usecase.NewPublihserUsecase(&usecase.PublisherUsecase{PublisherRepo: publisherRepo})
+	publisherHandler := delivery.NewPublisherHandler(publisherUsecase)
+
+	h := handler.NewHandler(&categoryHander, &publisherHandler)
 
 	s := &http.Server{
 		Addr:    fmt.Sprintf("localhost:%d", cfg.Port),
