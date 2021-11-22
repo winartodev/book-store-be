@@ -83,7 +83,7 @@ func (mc *mysqlCategory) UpdateCategory(ctx context.Context, id int64, category 
 }
 
 func (mc *mysqlCategory) DeleteCategory(ctx context.Context, id int64) error {
-	stmt, err := mc.DB.Prepare("DELETE category WHERE id=?")
+	stmt, err := mc.DB.Prepare("DELETE FROM category WHERE id=?")
 	if err != nil {
 		return err
 	}
