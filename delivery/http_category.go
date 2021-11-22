@@ -3,6 +3,7 @@ package delivery
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	bookstorebe "winartodev/book-store-be"
@@ -62,7 +63,7 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request, pa
 	}
 
 	if data.ID == 0 {
-		response.FailedResponse(w, http.StatusNotFound, "book not found")
+		response.FailedResponse(w, http.StatusNotFound, fmt.Sprintf("Category ID %d Was Not Found", id))
 		return
 	}
 
