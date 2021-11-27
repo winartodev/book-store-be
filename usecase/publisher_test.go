@@ -13,12 +13,12 @@ import (
 )
 
 type mockPublisherProvider struct {
-	publisherRepo *mocks.PublisherRepo
+	publisherRepo *mocks.PublisherRepository
 }
 
 func publihserProvider() mockPublisherProvider {
 	return mockPublisherProvider{
-		publisherRepo: new(mocks.PublisherRepo),
+		publisherRepo: new(mocks.PublisherRepository),
 	}
 }
 
