@@ -13,12 +13,12 @@ import (
 )
 
 type mockCategoryProvider struct {
-	categoryRepo *mocks.CategoryRepo
+	categoryRepo *mocks.CategoryRepository
 }
 
 func categoryProvider() mockCategoryProvider {
 	return mockCategoryProvider{
-		categoryRepo: new(mocks.CategoryRepo),
+		categoryRepo: new(mocks.CategoryRepository),
 	}
 }
 
