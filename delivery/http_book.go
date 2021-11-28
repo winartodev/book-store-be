@@ -106,7 +106,7 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request, param h
 		return
 	}
 
-	response.SuccessResponse(w, http.StatusCreated, "Book Has Been Updated")
+	response.SuccessResponse(w, http.StatusOK, "Book Has Been Updated")
 }
 
 func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
@@ -119,5 +119,5 @@ func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request, param h
 		return
 	}
 
-	response.SuccessResponse(w, http.StatusCreated, "Book Has Been Deleted")
+	response.SuccessResponse(w, http.StatusOK, "Book Has Been Deleted")
 }

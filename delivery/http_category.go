@@ -106,7 +106,7 @@ func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	response.SuccessResponse(w, http.StatusCreated, "Category Has Been Updated")
+	response.SuccessResponse(w, http.StatusOK, "Category Has Been Updated")
 }
 
 func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
@@ -119,5 +119,5 @@ func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	response.SuccessResponse(w, http.StatusCreated, "Category Has Been Deleted")
+	response.SuccessResponse(w, http.StatusOK, "Category Has Been Deleted")
 }
