@@ -118,5 +118,5 @@ func (h *PublsiherHandler) DeletePublisher(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	response.SuccessResponse(w, http.StatusCreated, "Publisher Has Been Deleted")
+	response.SuccessResponse(w, http.StatusOK, "Publisher Has Been Deleted")
 }
