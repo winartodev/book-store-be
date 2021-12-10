@@ -1,0 +1,9 @@
+default: &default
+  adapter: postgresql
+  host: <%= ENV['DATABASE_HOST'] || '127.0.0.1' %> 
+  port: <%= ENV['DATABASE_PORT'] || '5432'%> 
+  database: <%= ENV['DATABASE_NAME'] || 'db_bookstore'%> 
+  username: <%= ENV['DATABASE_USERNAME'] || 'postgres' %> 
+  password: <%= ENV['DATABASE_PASSWORD'] || 'postgres'%> 
+
+development: *default
