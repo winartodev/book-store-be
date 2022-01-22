@@ -2,21 +2,30 @@ package usecase
 
 import (
 	"context"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
+	"winartodev/book-store-be/repository"
 )
 
-type CategoryUsecase struct {
-	CategoryRepo bookstorebe.CategoryRepository
+type CategoryUsecase interface {
+	GetCategories(ctx context.Context) ([]entity.Category, error)
+	GetCategory(ctx context.Context, id int64) (entity.Category, error)
+	CreateCategory(ctx context.Context, category *entity.Category) error
+	UpdateCategory(ctx context.Context, id int64, category *entity.Category) error
+	DeleteCategory(ctx context.Context, id int64) error
 }
 
-func NewCategoryUsecase(uc *CategoryUsecase) bookstorebe.CategoryUsecase {
-	return &CategoryUsecase{
-		CategoryRepo: uc.CategoryRepo,
+type CategoryRepository struct {
+	CategoryRepo repository.CategoryRepository
+}
+
+func NewCategoryUsecase(repo *CategoryRepository) CategoryUsecase {
+	return &CategoryRepository{
+		CategoryRepo: repo.CategoryRepo,
 	}
 }
 
-func (uc *CategoryUsecase) GetCategories(ctx context.Context) ([]bookstorebe.Category, error) {
-	res, err := uc.CategoryRepo.GetCategories(ctx)
+func (r *CategoryRepository) GetCategories(ctx context.Context) ([]entity.Category, error) {
+	res, err := r.CategoryRepo.GetCategories(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -24,17 +33,17 @@ func (uc *CategoryUsecase) GetCategories(ctx context.Context) ([]bookstorebe.Cat
 	return res, nil
 }
 
-func (uc *CategoryUsecase) GetCategory(ctx context.Context, id int64) (bookstorebe.Category, error) {
-	res, err := uc.CategoryRepo.GetCategory(ctx, id)
+func (r *CategoryRepository) GetCategory(ctx context.Context, id int64) (entity.Category, error) {
+	res, err := r.CategoryRepo.GetCategory(ctx, id)
 	if err != nil {
-		return bookstorebe.Category{}, err
+		return entity.Category{}, err
 	}
 
 	return res, nil
 }
 
-func (uc *CategoryUsecase) CreateCategory(ctx context.Context, category *bookstorebe.Category) error {
-	err := uc.CategoryRepo.CreateCategory(ctx, category)
+func (r *CategoryRepository) CreateCategory(ctx context.Context, category *entity.Category) error {
+	err := r.CategoryRepo.CreateCategory(ctx, category)
 	if err != nil {
 		return err
 	}
@@ -42,8 +51,8 @@ func (uc *CategoryUsecase) CreateCategory(ctx context.Context, category *booksto
 	return nil
 }
 
-func (uc *CategoryUsecase) UpdateCategory(ctx context.Context, id int64, category *bookstorebe.Category) error {
-	err := uc.CategoryRepo.UpdateCategory(ctx, id, category)
+func (r *CategoryRepository) UpdateCategory(ctx context.Context, id int64, category *entity.Category) error {
+	err := r.CategoryRepo.UpdateCategory(ctx, id, category)
 	if err != nil {
 		return err
 	}
@@ -51,8 +60,8 @@ func (uc *CategoryUsecase) UpdateCategory(ctx context.Context, id int64, categor
 	return nil
 }
 
-func (uc *CategoryUsecase) DeleteCategory(ctx context.Context, id int64) error {
-	err := uc.CategoryRepo.DeleteCategory(ctx, id)
+func (r *CategoryRepository) DeleteCategory(ctx context.Context, id int64) error {
+	err := r.CategoryRepo.DeleteCategory(ctx, id)
 	if err != nil {
 		return err
 	}

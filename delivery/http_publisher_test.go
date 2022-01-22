@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	bookstorebe "winartodev/book-store-be"
 	"winartodev/book-store-be/delivery"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/handler"
 	"winartodev/book-store-be/mocks"
 
@@ -27,13 +27,13 @@ func newPublisherHandler() (http.Handler, *mocks.PublisherUsecase) {
 func TestGetPublishers(t *testing.T) {
 	testCases := []struct {
 		name      string
-		publisher []bookstorebe.Publisher
+		publisher []entity.Publisher
 		wantError bool
 		getErr    error
 	}{
 		{
 			name: "success",
-			publisher: []bookstorebe.Publisher{
+			publisher: []entity.Publisher{
 				{
 					ID:          1,
 					Name:        "asdf",
@@ -44,12 +44,12 @@ func TestGetPublishers(t *testing.T) {
 		},
 		{
 			name:      "success publisher data is empty",
-			publisher: []bookstorebe.Publisher{},
+			publisher: []entity.Publisher{},
 			wantError: false,
 		},
 		{
 			name:      "failed to get publisher data",
-			publisher: []bookstorebe.Publisher{},
+			publisher: []entity.Publisher{},
 			wantError: true,
 			getErr:    errors.New("failed to get publisher data"),
 		},
@@ -74,14 +74,14 @@ func TestGetPublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
 		id        int64
-		publisher bookstorebe.Publisher
+		publisher entity.Publisher
 		wantError bool
 		getErr    error
 	}{
 		{
 			name: "success",
 			id:   1,
-			publisher: bookstorebe.Publisher{
+			publisher: entity.Publisher{
 				ID:          1,
 				Name:        "asdf",
 				Address:     "asdf",
@@ -93,13 +93,13 @@ func TestGetPublisher(t *testing.T) {
 		{
 			name:      "failed publisher data not found",
 			id:        1,
-			publisher: bookstorebe.Publisher{},
+			publisher: entity.Publisher{},
 			wantError: true,
 		},
 		{
 			name:      "failed to get publisher data",
 			id:        1,
-			publisher: bookstorebe.Publisher{},
+			publisher: entity.Publisher{},
 			wantError: true,
 			getErr:    errors.New("failed to get publisher data"),
 		},
@@ -123,13 +123,13 @@ func TestGetPublisher(t *testing.T) {
 func TestCreatePublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
-		publisher bookstorebe.Publisher
+		publisher entity.Publisher
 		wantError bool
 		createErr error
 	}{
 		{
 			name: "success",
-			publisher: bookstorebe.Publisher{
+			publisher: entity.Publisher{
 				ID:          1,
 				Name:        "asdf",
 				Address:     "asdf",
@@ -138,7 +138,7 @@ func TestCreatePublisher(t *testing.T) {
 		},
 		{
 			name:      "failed to create publisher data",
-			publisher: bookstorebe.Publisher{},
+			publisher: entity.Publisher{},
 			wantError: true,
 			createErr: errors.New("failed to create publisher data"),
 		},
@@ -164,14 +164,14 @@ func TestUpdatePublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
 		id        int64
-		publisher bookstorebe.Publisher
+		publisher entity.Publisher
 		wantError bool
 		updateErr error
 	}{
 		{
 			name: "success",
 			id:   1,
-			publisher: bookstorebe.Publisher{
+			publisher: entity.Publisher{
 				ID:          1,
 				Name:        "asdf",
 				Address:     "asdf",
@@ -183,7 +183,7 @@ func TestUpdatePublisher(t *testing.T) {
 		{
 			name:      "failed to update publisher data",
 			id:        1,
-			publisher: bookstorebe.Publisher{},
+			publisher: entity.Publisher{},
 			wantError: true,
 			updateErr: errors.New("failed to update publisher data"),
 		},

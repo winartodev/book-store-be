@@ -4,7 +4,7 @@ package mocks
 
 import (
 	context "context"
-	bookstorebe "winartodev/book-store-be"
+	entity "winartodev/book-store-be/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -15,11 +15,11 @@ type BookUsecase struct {
 }
 
 // CreateBook provides a mock function with given fields: ctx, book
-func (_m *BookUsecase) CreateBook(ctx context.Context, book *bookstorebe.Book) error {
+func (_m *BookUsecase) CreateBook(ctx context.Context, book *entity.Book) error {
 	ret := _m.Called(ctx, book)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *bookstorebe.Book) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Book) error); ok {
 		r0 = rf(ctx, book)
 	} else {
 		r0 = ret.Error(0)
@@ -43,14 +43,14 @@ func (_m *BookUsecase) DeleteBook(ctx context.Context, id int64) error {
 }
 
 // GetBook provides a mock function with given fields: ctx, id
-func (_m *BookUsecase) GetBook(ctx context.Context, id int64) (bookstorebe.Book, error) {
+func (_m *BookUsecase) GetBook(ctx context.Context, id int64) (entity.Book, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 bookstorebe.Book
-	if rf, ok := ret.Get(0).(func(context.Context, int64) bookstorebe.Book); ok {
+	var r0 entity.Book
+	if rf, ok := ret.Get(0).(func(context.Context, int64) entity.Book); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(bookstorebe.Book)
+		r0 = ret.Get(0).(entity.Book)
 	}
 
 	var r1 error
@@ -64,15 +64,15 @@ func (_m *BookUsecase) GetBook(ctx context.Context, id int64) (bookstorebe.Book,
 }
 
 // GetBooks provides a mock function with given fields: ctx
-func (_m *BookUsecase) GetBooks(ctx context.Context) ([]bookstorebe.Book, error) {
+func (_m *BookUsecase) GetBooks(ctx context.Context) ([]entity.Book, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []bookstorebe.Book
-	if rf, ok := ret.Get(0).(func(context.Context) []bookstorebe.Book); ok {
+	var r0 []entity.Book
+	if rf, ok := ret.Get(0).(func(context.Context) []entity.Book); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]bookstorebe.Book)
+			r0 = ret.Get(0).([]entity.Book)
 		}
 	}
 
@@ -87,11 +87,11 @@ func (_m *BookUsecase) GetBooks(ctx context.Context) ([]bookstorebe.Book, error)
 }
 
 // UpdateBook provides a mock function with given fields: ctx, id, book
-func (_m *BookUsecase) UpdateBook(ctx context.Context, id int64, book *bookstorebe.Book) error {
+func (_m *BookUsecase) UpdateBook(ctx context.Context, id int64, book *entity.Book) error {
 	ret := _m.Called(ctx, id, book)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int64, *bookstorebe.Book) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int64, *entity.Book) error); ok {
 		r0 = rf(ctx, id, book)
 	} else {
 		r0 = ret.Error(0)
