@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	bookstorebe "winartodev/book-store-be"
 	"winartodev/book-store-be/delivery"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/handler"
 	"winartodev/book-store-be/mocks"
 
@@ -27,13 +27,13 @@ func newBookHandler() (http.Handler, *mocks.BookUsecase) {
 func TestGetBooks(t *testing.T) {
 	testCases := []struct {
 		name     string
-		books    []bookstorebe.Book
+		books    []entity.Book
 		wantErr  bool
 		getError error
 	}{
 		{
 			name: "success",
-			books: []bookstorebe.Book{
+			books: []entity.Book{
 				{
 					ID:          1,
 					PublisherID: 1,
@@ -47,11 +47,11 @@ func TestGetBooks(t *testing.T) {
 		},
 		{
 			name:  "success with no data",
-			books: []bookstorebe.Book{},
+			books: []entity.Book{},
 		},
 		{
 			name:     "failed to get books",
-			books:    []bookstorebe.Book{},
+			books:    []entity.Book{},
 			wantErr:  true,
 			getError: errors.New("failed to get books"),
 		},
@@ -76,14 +76,14 @@ func TestGetBook(t *testing.T) {
 	testCases := []struct {
 		name    string
 		id      int64
-		book    bookstorebe.Book
+		book    entity.Book
 		wantErr bool
 		getErr  error
 	}{
 		{
 			name: "success",
 			id:   1,
-			book: bookstorebe.Book{
+			book: entity.Book{
 				ID:          1,
 				PublisherID: 1,
 				CategoryID:  1,
@@ -96,13 +96,13 @@ func TestGetBook(t *testing.T) {
 		{
 			name:    "success with book not found",
 			id:      1,
-			book:    bookstorebe.Book{},
+			book:    entity.Book{},
 			wantErr: true,
 		},
 		{
 			name:    "failed to get book data",
 			id:      1,
-			book:    bookstorebe.Book{},
+			book:    entity.Book{},
 			wantErr: true,
 			getErr:  errors.New("failed to get book data"),
 		},
@@ -126,13 +126,13 @@ func TestGetBook(t *testing.T) {
 func TestCreateBook(t *testing.T) {
 	testCases := []struct {
 		name      string
-		book      bookstorebe.Book
+		book      entity.Book
 		wantErr   bool
 		createErr error
 	}{
 		{
 			name: "success",
-			book: bookstorebe.Book{
+			book: entity.Book{
 				ID:          1,
 				PublisherID: 1,
 				CategoryID:  1,
@@ -144,7 +144,7 @@ func TestCreateBook(t *testing.T) {
 		},
 		{
 			name: "failed create book",
-			book: bookstorebe.Book{
+			book: entity.Book{
 				ID:          1,
 				PublisherID: 1,
 				CategoryID:  1,
@@ -176,14 +176,14 @@ func TestUpdateBook(t *testing.T) {
 	testCases := []struct {
 		name      string
 		id        int64
-		book      bookstorebe.Book
+		book      entity.Book
 		wantErr   bool
 		updateErr error
 	}{
 		{
 			name: "success",
 			id:   1,
-			book: bookstorebe.Book{
+			book: entity.Book{
 				ID:          1,
 				PublisherID: 1,
 				CategoryID:  1,
@@ -196,7 +196,7 @@ func TestUpdateBook(t *testing.T) {
 		{
 			name: "failed to create book",
 			id:   1,
-			book: bookstorebe.Book{
+			book: entity.Book{
 				ID:          1,
 				PublisherID: 1,
 				CategoryID:  1,

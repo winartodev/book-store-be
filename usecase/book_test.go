@@ -4,7 +4,8 @@ import (
 	"context"
 	"errors"
 	"testing"
-	bookstorebe "winartodev/book-store-be"
+
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/mocks"
 	"winartodev/book-store-be/usecase"
 
@@ -22,28 +23,28 @@ func bookProvider() mockBookProvider {
 	}
 }
 
-func newBookUseCaseMock(uc *usecase.BookUsecase) bookstorebe.BookUsecase {
-	return usecase.NewBookUsecase(uc)
+func newBookUseCaseMock(repo *usecase.BookRepository) usecase.BookUsecase {
+	return usecase.NewBookUsecase(repo)
 }
 
 func TestGetBooks(t *testing.T) {
 	testCases := []struct {
 		name    string
-		books   []bookstorebe.Book
-		expRes  []bookstorebe.Book
+		books   []entity.Book
+		expRes  []entity.Book
 		isError bool
 		wantErr error
 	}{
 		{
 			name:    "success",
-			books:   []bookstorebe.Book{{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4}},
-			expRes:  []bookstorebe.Book{{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4}},
+			books:   []entity.Book{{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4}},
+			expRes:  []entity.Book{{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4}},
 			isError: false,
 			wantErr: nil,
 		},
 		{
 			name:    "failed",
-			books:   []bookstorebe.Book{{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4}},
+			books:   []entity.Book{{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4}},
 			expRes:  nil,
 			isError: true,
 			wantErr: errors.New("Dummy Error"),
@@ -55,7 +56,7 @@ func TestGetBooks(t *testing.T) {
 			prov := bookProvider()
 			prov.BookRepo.On("GetBooks", mock.Anything).Return(test.books, test.wantErr)
 
-			bookUsecase := newBookUseCaseMock(&usecase.BookUsecase{prov.BookRepo})
+			bookUsecase := newBookUseCaseMock(&usecase.BookRepository{prov.BookRepo})
 
 			ctx := context.Background()
 			res, err := bookUsecase.GetBooks(ctx)
@@ -76,24 +77,24 @@ func TestGetBook(t *testing.T) {
 	testCases := []struct {
 		name    string
 		ID      int64
-		book    bookstorebe.Book
-		expBook bookstorebe.Book
+		book    entity.Book
+		expBook entity.Book
 		isError bool
 		wantErr error
 	}{
 		{
 			name:    "success",
 			ID:      1,
-			book:    bookstorebe.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
-			expBook: bookstorebe.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
+			book:    entity.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
+			expBook: entity.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
 			isError: false,
 			wantErr: nil,
 		},
 		{
 			name:    "failed",
 			ID:      1,
-			book:    bookstorebe.Book{},
-			expBook: bookstorebe.Book{},
+			book:    entity.Book{},
+			expBook: entity.Book{},
 			isError: true,
 			wantErr: errors.New("Dummy Error"),
 		},
@@ -104,7 +105,7 @@ func TestGetBook(t *testing.T) {
 			prov := bookProvider()
 			prov.BookRepo.On("GetBook", mock.Anything, mock.AnythingOfType("int64")).Return(test.book, test.wantErr)
 
-			bookUsecase := newBookUseCaseMock(&usecase.BookUsecase{prov.BookRepo})
+			bookUsecase := newBookUseCaseMock(&usecase.BookRepository{prov.BookRepo})
 			ctx := context.Background()
 			res, err := bookUsecase.GetBook(ctx, test.ID)
 
@@ -122,19 +123,19 @@ func TestGetBook(t *testing.T) {
 func TestCreateBook(t *testing.T) {
 	testCases := []struct {
 		name    string
-		book    bookstorebe.Book
+		book    entity.Book
 		isError bool
 		wantErr error
 	}{
 		{
 			name:    "success",
-			book:    bookstorebe.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
+			book:    entity.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
 			isError: false,
 			wantErr: nil,
 		},
 		{
 			name:    "failed",
-			book:    bookstorebe.Book{},
+			book:    entity.Book{},
 			isError: true,
 			wantErr: errors.New("Dummy Error"),
 		},
@@ -145,7 +146,7 @@ func TestCreateBook(t *testing.T) {
 			prov := bookProvider()
 			prov.BookRepo.On("CreateBook", mock.Anything, mock.Anything).Return(test.wantErr)
 
-			bookUsecase := newBookUseCaseMock(&usecase.BookUsecase{prov.BookRepo})
+			bookUsecase := newBookUseCaseMock(&usecase.BookRepository{prov.BookRepo})
 			ctx := context.Background()
 			err := bookUsecase.CreateBook(ctx, &test.book)
 
@@ -158,21 +159,21 @@ func TestUpdateBook(t *testing.T) {
 	testCases := []struct {
 		name    string
 		ID      int64
-		book    bookstorebe.Book
+		book    entity.Book
 		isError bool
 		wantErr error
 	}{
 		{
 			name:    "success",
 			ID:      1,
-			book:    bookstorebe.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
+			book:    entity.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
 			isError: false,
 			wantErr: nil,
 		},
 		{
 			name:    "failed",
 			ID:      1,
-			book:    bookstorebe.Book{},
+			book:    entity.Book{},
 			isError: true,
 			wantErr: errors.New("Dummy Error"),
 		},
@@ -183,7 +184,7 @@ func TestUpdateBook(t *testing.T) {
 			prov := bookProvider()
 			prov.BookRepo.On("UpdateBook", mock.Anything, mock.AnythingOfType("int64"), mock.Anything).Return(test.wantErr)
 
-			bookUsecase := newBookUseCaseMock(&usecase.BookUsecase{prov.BookRepo})
+			bookUsecase := newBookUseCaseMock(&usecase.BookRepository{prov.BookRepo})
 			ctx := context.Background()
 			err := bookUsecase.UpdateBook(ctx, test.ID, &test.book)
 
@@ -196,21 +197,21 @@ func TestDeleteBook(t *testing.T) {
 	testCases := []struct {
 		name    string
 		ID      int64
-		book    bookstorebe.Book
+		book    entity.Book
 		isError bool
 		wantErr error
 	}{
 		{
 			name:    "success",
 			ID:      1,
-			book:    bookstorebe.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
+			book:    entity.Book{ID: 1, PublisherID: 1, CategoryID: 1, Title: "Book Title", Author: "Book Author", Publication: 2021, Stock: 4},
 			isError: false,
 			wantErr: nil,
 		},
 		{
 			name:    "failed",
 			ID:      1,
-			book:    bookstorebe.Book{},
+			book:    entity.Book{},
 			isError: true,
 			wantErr: errors.New("Dummy Error"),
 		},
@@ -221,7 +222,7 @@ func TestDeleteBook(t *testing.T) {
 			prov := bookProvider()
 			prov.BookRepo.On("DeleteBook", mock.Anything, mock.AnythingOfType("int64")).Return(test.wantErr)
 
-			bookUsecase := newBookUseCaseMock(&usecase.BookUsecase{prov.BookRepo})
+			bookUsecase := newBookUseCaseMock(&usecase.BookRepository{prov.BookRepo})
 			ctx := context.Background()
 			err := bookUsecase.DeleteBook(ctx, test.ID)
 

@@ -6,17 +6,18 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/response"
+	"winartodev/book-store-be/usecase"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 type BookHandler struct {
-	uc bookstorebe.BookUsecase
+	uc usecase.BookUsecase
 }
 
-func NewBookHandler(usecase bookstorebe.BookUsecase) BookHandler {
+func NewBookHandler(usecase usecase.BookUsecase) BookHandler {
 	return BookHandler{
 		uc: usecase,
 	}
@@ -71,7 +72,7 @@ func (h *BookHandler) GetBook(w http.ResponseWriter, r *http.Request, param http
 }
 
 func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var book bookstorebe.Book
+	var book entity.Book
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&book); err != nil {
@@ -92,7 +93,7 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request, _ httpr
 func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
 	id, _ := strconv.ParseInt(param.ByName("id"), 10, 64)
 
-	var book bookstorebe.Book
+	var book entity.Book
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&book); err != nil {
 		response.FailedResponse(w, 1, err.Error())

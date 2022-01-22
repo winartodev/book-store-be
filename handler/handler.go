@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"winartodev/book-store-be/response"
 
@@ -19,10 +20,17 @@ func NewHandler(register ...Registration) http.Handler {
 	router := httprouter.New()
 	router.HandleMethodNotAllowed = false
 
+	router.GET("/healthz", healthz)
+
 	for _, r := range register {
 		r.Register(router)
 	}
 
 	router.NotFound = http.HandlerFunc(NotFound)
 	return router
+}
+
+func healthz(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintln(w, "OK")
 }
