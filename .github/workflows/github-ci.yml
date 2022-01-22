@@ -8,25 +8,36 @@ on:
 
 jobs:
 
-  build:
-    name: build
+  downnload_depenencies:
+    name: downnload_depenencies
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Check out the repo
+      uses: actions/checkout@v2
 
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.17
 
-    - name: Build
-      run: make build
-
   test:
     name: test
-    needs: build
+    needs: downnload_depenencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
       - name: test
         run: make test
+  
+  compile:
+    name: compile
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: compile
+        run: make build
