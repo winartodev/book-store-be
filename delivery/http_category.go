@@ -6,17 +6,18 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/response"
+	"winartodev/book-store-be/usecase"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 type CategoryHandler struct {
-	uc bookstorebe.CategoryUsecase
+	uc usecase.CategoryUsecase
 }
 
-func NewCategoryHandler(usecase bookstorebe.CategoryUsecase) CategoryHandler {
+func NewCategoryHandler(usecase usecase.CategoryUsecase) CategoryHandler {
 	return CategoryHandler{
 		uc: usecase,
 	}
@@ -71,7 +72,7 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request, pa
 }
 
 func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
-	var category bookstorebe.Category
+	var category entity.Category
 	decoder := json.NewDecoder(r.Body)
 
 	if err := decoder.Decode(&category); err != nil {
@@ -92,7 +93,7 @@ func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request,
 func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
 	id, _ := strconv.ParseInt(param.ByName("id"), 10, 64)
 
-	var category bookstorebe.Category
+	var category entity.Category
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&category); err != nil {
 		response.FailedResponse(w, 1, err.Error())

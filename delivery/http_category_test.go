@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	bookstorebe "winartodev/book-store-be"
 	"winartodev/book-store-be/delivery"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/handler"
 	"winartodev/book-store-be/mocks"
 
@@ -28,28 +28,28 @@ func TestGetCategories(t *testing.T) {
 	testCases := []struct {
 		name      string
 		endpoint  string
-		category  []bookstorebe.Category
+		category  []entity.Category
 		wantError bool
 		getError  error
 	}{
 		{
 			name:      "success",
 			endpoint:  "/bookstore/category",
-			category:  []bookstorebe.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
+			category:  []entity.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
 			wantError: false,
 			getError:  nil,
 		},
 		{
 			name:      "success with no data",
 			endpoint:  "/bookstore/category",
-			category:  []bookstorebe.Category{},
+			category:  []entity.Category{},
 			wantError: false,
 			getError:  nil,
 		},
 		{
 			name:      "failed get category data",
 			endpoint:  "/bookstore/category",
-			category:  []bookstorebe.Category{},
+			category:  []entity.Category{},
 			wantError: true,
 			getError:  errors.New("failed get category data"),
 		},
@@ -73,28 +73,28 @@ func TestGetCategory(t *testing.T) {
 	testCases := []struct {
 		name     string
 		id       int64
-		category bookstorebe.Category
+		category entity.Category
 		wantErr  bool
 		getError error
 	}{
 		{
 			name:     "success",
 			id:       1,
-			category: bookstorebe.Category{ID: 1, Name: "Classics"},
+			category: entity.Category{ID: 1, Name: "Classics"},
 			wantErr:  false,
 			getError: nil,
 		},
 		{
 			name:     "failed with category not found",
 			id:       1,
-			category: bookstorebe.Category{},
+			category: entity.Category{},
 			wantErr:  true,
 			getError: nil,
 		},
 		{
 			name:     "failed to get category",
 			id:       1,
-			category: bookstorebe.Category{ID: 1, Name: "Classics"},
+			category: entity.Category{ID: 1, Name: "Classics"},
 			wantErr:  true,
 			getError: errors.New("failed to get category"),
 		},
@@ -118,21 +118,21 @@ func TestCreateCategory(t *testing.T) {
 	testCases := []struct {
 		name      string
 		endpoint  string
-		category  bookstorebe.Category
+		category  entity.Category
 		wantError bool
 		createErr error
 	}{
 		{
 			name:      "success",
 			endpoint:  "/bookstore/category",
-			category:  bookstorebe.Category{ID: 1, Name: "Classics"},
+			category:  entity.Category{ID: 1, Name: "Classics"},
 			wantError: false,
 			createErr: nil,
 		},
 		{
 			name:      "failed created category",
 			endpoint:  "/bookstore/category",
-			category:  bookstorebe.Category{ID: 1, Name: "Classics"},
+			category:  entity.Category{ID: 1, Name: "Classics"},
 			wantError: true,
 			createErr: errors.New("failed created category"),
 		},
@@ -157,21 +157,21 @@ func TestUpdateCategory(t *testing.T) {
 	testcases := []struct {
 		name      string
 		id        int64
-		category  bookstorebe.Category
+		category  entity.Category
 		wantError bool
 		updateErr error
 	}{
 		{
 			name:      "success",
 			id:        1,
-			category:  bookstorebe.Category{ID: 1, Name: "Classics"},
+			category:  entity.Category{ID: 1, Name: "Classics"},
 			wantError: false,
 			updateErr: nil,
 		},
 		{
 			name:      "failed update category",
 			id:        1,
-			category:  bookstorebe.Category{ID: 1, Name: "Classics"},
+			category:  entity.Category{ID: 1, Name: "Classics"},
 			wantError: true,
 			updateErr: errors.New("fail update category"),
 		},

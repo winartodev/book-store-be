@@ -35,3 +35,20 @@ stop_db:
 start_db: 
 	cd db; echo "Database Started"; \
 	docker-compose start 
+
+# DOCKER
+docker_build: 
+	docker build . -t book-store-be -f deploy/api/Dockerfile
+
+docker_run: 
+	docker run --name book-store-api -dp 8081:8080 book-store-be
+
+docker_log:
+	docker logs -f book-store-api
+
+docker_remove_container: 
+	docker rm -f book-store
+
+docker_force_all:
+	docker rm -f book-store; \
+	docker rmi book-store-api

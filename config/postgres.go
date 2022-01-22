@@ -4,15 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
-func NewMysql(cfg *Config) (*sql.DB, error) {
-	dbConfig := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-		cfg.Database.Username,
-		cfg.Database.Password,
+func NewPostgres(cfg *Config) (*sql.DB, error) {
+	dbConfig := fmt.Sprintf("host=%s port=%s user=%s "+
+		"password=%s dbname=%s sslmode=disable",
 		cfg.Database.Host,
 		cfg.Database.Port,
+		cfg.Database.Username,
+		cfg.Database.Password,
 		cfg.Database.Name,
 	)
 

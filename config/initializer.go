@@ -27,7 +27,8 @@ func NewConfig() Config {
 func Serve() {
 	cfg := NewConfig()
 
-	db, err := NewMysql(&cfg)
+	// db, err := NewMysql(&cfg)
+	db, err := NewPostgres(&cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -36,21 +37,21 @@ func Serve() {
 	logger.Init()
 
 	categoryRepo := repository.NewMysqlCategory(db)
-	categoryUsecase := usecase.NewCategoryUsecase(&usecase.CategoryUsecase{CategoryRepo: categoryRepo})
+	categoryUsecase := usecase.NewCategoryUsecase(&usecase.CategoryRepository{CategoryRepo: categoryRepo})
 	categoryHander := delivery.NewCategoryHandler(categoryUsecase)
 
 	publisherRepo := repository.NewMysqlPublisher(db)
-	publisherUsecase := usecase.NewPublihserUsecase(&usecase.PublisherUsecase{PublisherRepo: publisherRepo})
+	publisherUsecase := usecase.NewPublihserUsecase(&usecase.PublisherRepository{PublisherRepo: publisherRepo})
 	publisherHandler := delivery.NewPublisherHandler(publisherUsecase)
 
 	bookRepo := repository.NewMysqlBook(db)
-	bookUsecase := usecase.NewBookUsecase(&usecase.BookUsecase{BookRepo: bookRepo})
+	bookUsecase := usecase.NewBookUsecase(&usecase.BookRepository{BookRepo: bookRepo})
 	bookHandler := delivery.NewBookHandler(bookUsecase)
 
 	h := handler.NewHandler(&categoryHander, &publisherHandler, &bookHandler)
 
 	s := &http.Server{
-		Addr:    fmt.Sprintf("localhost:%d", cfg.Port),
+		Addr:    fmt.Sprintf(":%d", cfg.Port),
 		Handler: h,
 	}
 

@@ -6,17 +6,18 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/response"
+	"winartodev/book-store-be/usecase"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 type PublsiherHandler struct {
-	uc bookstorebe.PublisherUsecase
+	uc usecase.PublisherUsecase
 }
 
-func NewPublisherHandler(usecase bookstorebe.PublisherUsecase) PublsiherHandler {
+func NewPublisherHandler(usecase usecase.PublisherUsecase) PublsiherHandler {
 	return PublsiherHandler{
 		uc: usecase,
 	}
@@ -71,7 +72,7 @@ func (h *PublsiherHandler) GetPublisher(w http.ResponseWriter, r *http.Request, 
 }
 
 func (h *PublsiherHandler) CreatePublisher(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var publisher bookstorebe.Publisher
+	var publisher entity.Publisher
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&publisher); err != nil {
 		response.FailedResponse(w, 1, err.Error())
@@ -91,7 +92,7 @@ func (h *PublsiherHandler) CreatePublisher(w http.ResponseWriter, r *http.Reques
 func (h *PublsiherHandler) UpdatePublisher(w http.ResponseWriter, r *http.Request, param httprouter.Params) {
 	id, _ := strconv.ParseInt(param.ByName("id"), 10, 64)
 
-	var publisher bookstorebe.Publisher
+	var publisher entity.Publisher
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&publisher); err != nil {
 		response.FailedResponse(w, 1, err.Error())
