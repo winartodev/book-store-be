@@ -2,19 +2,29 @@ package usecase
 
 import (
 	"context"
-	bookstorebe "winartodev/book-store-be"
+
+	"winartodev/book-store-be/entity"
+	"winartodev/book-store-be/repository"
 )
 
-type BookUsecase struct {
-	BookRepo bookstorebe.BookRepository
+type BookUsecase interface {
+	GetBooks(ctx context.Context) ([]entity.Book, error)
+	GetBook(ctx context.Context, id int64) (entity.Book, error)
+	CreateBook(ctx context.Context, book *entity.Book) error
+	UpdateBook(ctx context.Context, id int64, book *entity.Book) error
+	DeleteBook(ctx context.Context, id int64) error
 }
 
-func NewBookUsecase(uc *BookUsecase) bookstorebe.BookUsecase {
-	return &BookUsecase{BookRepo: uc.BookRepo}
+type BookRepository struct {
+	BookRepo repository.BookRepository
 }
 
-func (uc *BookUsecase) GetBooks(ctx context.Context) ([]bookstorebe.Book, error) {
-	res, err := uc.BookRepo.GetBooks(ctx)
+func NewBookUsecase(repo *BookRepository) BookUsecase {
+	return &BookRepository{BookRepo: repo.BookRepo}
+}
+
+func (repo *BookRepository) GetBooks(ctx context.Context) ([]entity.Book, error) {
+	res, err := repo.BookRepo.GetBooks(ctx)
 
 	if err != nil {
 		return nil, err
@@ -23,17 +33,17 @@ func (uc *BookUsecase) GetBooks(ctx context.Context) ([]bookstorebe.Book, error)
 	return res, nil
 }
 
-func (uc *BookUsecase) GetBook(ctx context.Context, id int64) (bookstorebe.Book, error) {
-	res, err := uc.BookRepo.GetBook(ctx, id)
+func (repo *BookRepository) GetBook(ctx context.Context, id int64) (entity.Book, error) {
+	res, err := repo.BookRepo.GetBook(ctx, id)
 	if err != nil {
-		return bookstorebe.Book{}, err
+		return entity.Book{}, err
 	}
 
 	return res, nil
 }
 
-func (uc *BookUsecase) CreateBook(ctx context.Context, book *bookstorebe.Book) error {
-	err := uc.BookRepo.CreateBook(ctx, book)
+func (repo *BookRepository) CreateBook(ctx context.Context, book *entity.Book) error {
+	err := repo.BookRepo.CreateBook(ctx, book)
 	if err != nil {
 		return err
 	}
@@ -41,8 +51,8 @@ func (uc *BookUsecase) CreateBook(ctx context.Context, book *bookstorebe.Book) e
 	return nil
 }
 
-func (uc *BookUsecase) UpdateBook(ctx context.Context, id int64, book *bookstorebe.Book) error {
-	err := uc.BookRepo.UpdateBook(ctx, id, book)
+func (repo *BookRepository) UpdateBook(ctx context.Context, id int64, book *entity.Book) error {
+	err := repo.BookRepo.UpdateBook(ctx, id, book)
 	if err != nil {
 		return err
 	}
@@ -50,8 +60,8 @@ func (uc *BookUsecase) UpdateBook(ctx context.Context, id int64, book *bookstore
 	return nil
 }
 
-func (uc *BookUsecase) DeleteBook(ctx context.Context, id int64) error {
-	err := uc.BookRepo.DeleteBook(ctx, id)
+func (repo *BookRepository) DeleteBook(ctx context.Context, id int64) error {
+	err := repo.BookRepo.DeleteBook(ctx, id)
 	if err != nil {
 		return err
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/mocks"
 	"winartodev/book-store-be/usecase"
 
@@ -22,28 +22,28 @@ func publihserProvider() mockPublisherProvider {
 	}
 }
 
-func newPublisherUsecase(uc *usecase.PublisherUsecase) bookstorebe.PublisherUsecase {
-	return usecase.NewPublihserUsecase(uc)
+func newPublisherUsecase(repo *usecase.PublisherRepository) usecase.PublisherUsecase {
+	return usecase.NewPublihserUsecase(repo)
 }
 
 func TestGetPublishers(t *testing.T) {
 	testCases := []struct {
 		name      string
-		publisher []bookstorebe.Publisher
-		expRes    []bookstorebe.Publisher
+		publisher []entity.Publisher
+		expRes    []entity.Publisher
 		isError   bool
 		wantErr   error
 	}{
 		{
 			name:      "success",
-			publisher: []bookstorebe.Publisher{{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"}},
-			expRes:    []bookstorebe.Publisher{{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"}},
+			publisher: []entity.Publisher{{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"}},
+			expRes:    []entity.Publisher{{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"}},
 			isError:   false,
 			wantErr:   nil,
 		},
 		{
 			name:      "failed",
-			publisher: []bookstorebe.Publisher{},
+			publisher: []entity.Publisher{},
 			expRes:    nil,
 			isError:   true,
 			wantErr:   errors.New("Dummy Error"),
@@ -55,7 +55,7 @@ func TestGetPublishers(t *testing.T) {
 			prov := publihserProvider()
 			prov.publisherRepo.On("GetPublishers", mock.Anything).Return(test.publisher, test.wantErr)
 
-			publisherUsecase := newPublisherUsecase(&usecase.PublisherUsecase{prov.publisherRepo})
+			publisherUsecase := newPublisherUsecase(&usecase.PublisherRepository{prov.publisherRepo})
 			ctx := context.Background()
 			res, err := publisherUsecase.GetPublishers(ctx)
 
@@ -75,24 +75,24 @@ func TestGetPublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
 		ID        int64
-		publsiher bookstorebe.Publisher
-		expRes    bookstorebe.Publisher
+		publsiher entity.Publisher
+		expRes    entity.Publisher
 		isError   bool
 		wantErr   error
 	}{
 		{
 			name:      "success",
 			ID:        1,
-			publsiher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
-			expRes:    bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			publsiher: entity.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			expRes:    entity.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
 			isError:   false,
 			wantErr:   nil,
 		},
 		{
 			name:      "failed",
 			ID:        1,
-			publsiher: bookstorebe.Publisher{},
-			expRes:    bookstorebe.Publisher{},
+			publsiher: entity.Publisher{},
+			expRes:    entity.Publisher{},
 			isError:   true,
 			wantErr:   errors.New("Dummy Error"),
 		},
@@ -103,7 +103,7 @@ func TestGetPublisher(t *testing.T) {
 			prov := publihserProvider()
 			prov.publisherRepo.On("GetPublisher", mock.Anything, mock.AnythingOfType("int64")).Return(test.publsiher, test.wantErr)
 
-			publisherUsecase := newPublisherUsecase(&usecase.PublisherUsecase{prov.publisherRepo})
+			publisherUsecase := newPublisherUsecase(&usecase.PublisherRepository{prov.publisherRepo})
 			ctx := context.Background()
 			res, err := publisherUsecase.GetPublisher(ctx, test.ID)
 
@@ -121,19 +121,19 @@ func TestGetPublisher(t *testing.T) {
 func TestCreatePublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
-		publisher bookstorebe.Publisher
+		publisher entity.Publisher
 		isError   bool
 		wantErr   error
 	}{
 		{
 			name:      "success",
-			publisher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			publisher: entity.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
 			isError:   false,
 			wantErr:   nil,
 		},
 		{
 			name:      "failed",
-			publisher: bookstorebe.Publisher{},
+			publisher: entity.Publisher{},
 			isError:   true,
 			wantErr:   errors.New("Dummy Error"),
 		},
@@ -144,7 +144,7 @@ func TestCreatePublisher(t *testing.T) {
 			prov := publihserProvider()
 			prov.publisherRepo.On("CreatePublisher", mock.Anything, mock.Anything).Return(test.wantErr)
 
-			publisherUsecase := newPublisherUsecase(&usecase.PublisherUsecase{prov.publisherRepo})
+			publisherUsecase := newPublisherUsecase(&usecase.PublisherRepository{prov.publisherRepo})
 			ctx := context.Background()
 			err := publisherUsecase.CreatePublisher(ctx, &test.publisher)
 
@@ -157,21 +157,21 @@ func TestUpdatePublisher(t *testing.T) {
 	testCases := []struct {
 		name      string
 		ID        int64
-		publisher bookstorebe.Publisher
+		publisher entity.Publisher
 		isError   bool
 		wantErr   error
 	}{
 		{
 			name:      "success",
 			ID:        1,
-			publisher: bookstorebe.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
+			publisher: entity.Publisher{ID: 1, Name: "Publisher Name", Address: "Publisher Address", PhoneNumber: "123456789"},
 			isError:   false,
 			wantErr:   nil,
 		},
 		{
 			name:      "failed",
 			ID:        1,
-			publisher: bookstorebe.Publisher{},
+			publisher: entity.Publisher{},
 			isError:   true,
 			wantErr:   errors.New("Dummy Error"),
 		},
@@ -182,7 +182,7 @@ func TestUpdatePublisher(t *testing.T) {
 			prov := publihserProvider()
 			prov.publisherRepo.On("UpdatePublisher", mock.Anything, mock.AnythingOfType("int64"), mock.Anything).Return(test.wantErr)
 
-			publisherUsecase := newPublisherUsecase(&usecase.PublisherUsecase{prov.publisherRepo})
+			publisherUsecase := newPublisherUsecase(&usecase.PublisherRepository{prov.publisherRepo})
 			ctx := context.Background()
 			err := publisherUsecase.UpdatePublisher(ctx, test.ID, &test.publisher)
 
@@ -217,7 +217,7 @@ func TestDeletePublisher(t *testing.T) {
 			prov := publihserProvider()
 			prov.publisherRepo.On("DeletePublisher", mock.Anything, mock.AnythingOfType("int64")).Return(test.wantError)
 
-			publisherUsecase := newPublisherUsecase(&usecase.PublisherUsecase{prov.publisherRepo})
+			publisherUsecase := newPublisherUsecase(&usecase.PublisherRepository{prov.publisherRepo})
 			ctx := context.Background()
 			err := publisherUsecase.DeletePublisher(ctx, test.ID)
 

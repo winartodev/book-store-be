@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/mocks"
 	"winartodev/book-store-be/usecase"
 
@@ -22,29 +22,29 @@ func categoryProvider() mockCategoryProvider {
 	}
 }
 
-func newCategoryUsecase(uc *usecase.CategoryUsecase) bookstorebe.CategoryUsecase {
-	return usecase.NewCategoryUsecase(uc)
+func newCategoryUsecase(repo *usecase.CategoryRepository) usecase.CategoryUsecase {
+	return usecase.NewCategoryUsecase(repo)
 }
 
 func TestGetCategories(t *testing.T) {
 	testCases := []struct {
 		name     string
-		category []bookstorebe.Category
-		expRes   []bookstorebe.Category
+		category []entity.Category
+		expRes   []entity.Category
 		isError  bool
 		wantErr  error
 	}{
 		{
 			name:     "success",
-			category: []bookstorebe.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
-			expRes:   []bookstorebe.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
+			category: []entity.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
+			expRes:   []entity.Category{{ID: 1, Name: "Classics"}, {ID: 2, Name: "Detective and Mystery"}},
 			isError:  false,
 			wantErr:  nil,
 		},
 		{
 			name:     "failed",
-			category: []bookstorebe.Category{},
-			expRes:   []bookstorebe.Category{},
+			category: []entity.Category{},
+			expRes:   []entity.Category{},
 			isError:  true,
 			wantErr:  errors.New("Dummy Error"),
 		},
@@ -55,7 +55,7 @@ func TestGetCategories(t *testing.T) {
 			prov := categoryProvider()
 			prov.categoryRepo.On("GetCategories", mock.Anything).Return(test.category, test.wantErr)
 
-			categoryUsecase := newCategoryUsecase(&usecase.CategoryUsecase{prov.categoryRepo})
+			categoryUsecase := newCategoryUsecase(&usecase.CategoryRepository{prov.categoryRepo})
 			ctx := context.Background()
 			res, err := categoryUsecase.GetCategories(ctx)
 
@@ -75,24 +75,24 @@ func TestGetCategory(t *testing.T) {
 	testCases := []struct {
 		name     string
 		ID       int64
-		category bookstorebe.Category
-		expRes   bookstorebe.Category
+		category entity.Category
+		expRes   entity.Category
 		isError  bool
 		wantErr  error
 	}{
 		{
 			name:     "success",
 			ID:       1,
-			category: bookstorebe.Category{ID: 1, Name: "Classics"},
-			expRes:   bookstorebe.Category{ID: 1, Name: "Classics"},
+			category: entity.Category{ID: 1, Name: "Classics"},
+			expRes:   entity.Category{ID: 1, Name: "Classics"},
 			isError:  false,
 			wantErr:  nil,
 		},
 		{
 			name:     "failed",
 			ID:       1,
-			category: bookstorebe.Category{ID: 2, Name: "Detective and Mystery"},
-			expRes:   bookstorebe.Category{ID: 2, Name: "Detective and Mystery"},
+			category: entity.Category{ID: 2, Name: "Detective and Mystery"},
+			expRes:   entity.Category{ID: 2, Name: "Detective and Mystery"},
 			isError:  true,
 			wantErr:  errors.New("Dummy Error"),
 		},
@@ -103,7 +103,7 @@ func TestGetCategory(t *testing.T) {
 			prov := categoryProvider()
 			prov.categoryRepo.On("GetCategory", mock.Anything, mock.AnythingOfType("int64")).Return(test.category, test.wantErr)
 
-			categoryUsecase := newCategoryUsecase(&usecase.CategoryUsecase{prov.categoryRepo})
+			categoryUsecase := newCategoryUsecase(&usecase.CategoryRepository{prov.categoryRepo})
 			ctx := context.Background()
 			res, err := categoryUsecase.GetCategory(ctx, test.ID)
 
@@ -121,19 +121,19 @@ func TestGetCategory(t *testing.T) {
 func TestCreateCategory(t *testing.T) {
 	testCases := []struct {
 		name     string
-		category bookstorebe.Category
+		category entity.Category
 		isError  bool
 		wantErr  error
 	}{
 		{
 			name:     "success",
-			category: bookstorebe.Category{ID: 1, Name: "Classics"},
+			category: entity.Category{ID: 1, Name: "Classics"},
 			isError:  false,
 			wantErr:  nil,
 		},
 		{
 			name:     "failed",
-			category: bookstorebe.Category{},
+			category: entity.Category{},
 			isError:  true,
 			wantErr:  errors.New("Dummy Error"),
 		},
@@ -144,7 +144,7 @@ func TestCreateCategory(t *testing.T) {
 			prov := categoryProvider()
 			prov.categoryRepo.On("CreateCategory", mock.Anything, mock.Anything).Return(test.wantErr)
 
-			categoryUsecase := newCategoryUsecase(&usecase.CategoryUsecase{prov.categoryRepo})
+			categoryUsecase := newCategoryUsecase(&usecase.CategoryRepository{prov.categoryRepo})
 			ctx := context.Background()
 			err := categoryUsecase.CreateCategory(ctx, &test.category)
 
@@ -157,21 +157,21 @@ func TestUpateCategory(t *testing.T) {
 	testCases := []struct {
 		name     string
 		ID       int64
-		category bookstorebe.Category
+		category entity.Category
 		isError  bool
 		wantErr  error
 	}{
 		{
 			name:     "success",
 			ID:       1,
-			category: bookstorebe.Category{ID: 1, Name: "Classics"},
+			category: entity.Category{ID: 1, Name: "Classics"},
 			isError:  false,
 			wantErr:  nil,
 		},
 		{
 			name:     "failed",
 			ID:       1,
-			category: bookstorebe.Category{ID: 2, Name: "Detective and Mystery"},
+			category: entity.Category{ID: 2, Name: "Detective and Mystery"},
 			isError:  true,
 			wantErr:  errors.New("Dummy Error"),
 		},
@@ -182,7 +182,7 @@ func TestUpateCategory(t *testing.T) {
 			prov := categoryProvider()
 			prov.categoryRepo.On("UpdateCategory", mock.Anything, mock.AnythingOfType("int64"), mock.Anything).Return(test.wantErr)
 
-			categoryUsecase := newCategoryUsecase(&usecase.CategoryUsecase{prov.categoryRepo})
+			categoryUsecase := newCategoryUsecase(&usecase.CategoryRepository{prov.categoryRepo})
 			ctx := context.Background()
 			err := categoryUsecase.UpdateCategory(ctx, test.ID, &test.category)
 
@@ -217,7 +217,7 @@ func TestDeleteCategory(t *testing.T) {
 			prov := categoryProvider()
 			prov.categoryRepo.On("DeleteCategory", mock.Anything, mock.AnythingOfType("int64")).Return(test.wantErr)
 
-			categoryUsecase := newCategoryUsecase(&usecase.CategoryUsecase{prov.categoryRepo})
+			categoryUsecase := newCategoryUsecase(&usecase.CategoryRepository{prov.categoryRepo})
 			ctx := context.Background()
 			err := categoryUsecase.DeleteCategory(ctx, test.ID)
 

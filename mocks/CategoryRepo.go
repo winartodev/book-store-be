@@ -4,7 +4,7 @@ package mocks
 
 import (
 	context "context"
-	bookstorebe "winartodev/book-store-be"
+	entity "winartodev/book-store-be/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -15,11 +15,11 @@ type CategoryRepository struct {
 }
 
 // CreateCategory provides a mock function with given fields: ctx, category
-func (_m *CategoryRepository) CreateCategory(ctx context.Context, category *bookstorebe.Category) error {
+func (_m *CategoryRepository) CreateCategory(ctx context.Context, category *entity.Category) error {
 	ret := _m.Called(ctx, category)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *bookstorebe.Category) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *entity.Category) error); ok {
 		r0 = rf(ctx, category)
 	} else {
 		r0 = ret.Error(0)
@@ -43,15 +43,15 @@ func (_m *CategoryRepository) DeleteCategory(ctx context.Context, id int64) erro
 }
 
 // GetCategories provides a mock function with given fields: ctx
-func (_m *CategoryRepository) GetCategories(ctx context.Context) ([]bookstorebe.Category, error) {
+func (_m *CategoryRepository) GetCategories(ctx context.Context) ([]entity.Category, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []bookstorebe.Category
-	if rf, ok := ret.Get(0).(func(context.Context) []bookstorebe.Category); ok {
+	var r0 []entity.Category
+	if rf, ok := ret.Get(0).(func(context.Context) []entity.Category); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]bookstorebe.Category)
+			r0 = ret.Get(0).([]entity.Category)
 		}
 	}
 
@@ -66,14 +66,14 @@ func (_m *CategoryRepository) GetCategories(ctx context.Context) ([]bookstorebe.
 }
 
 // GetCategory provides a mock function with given fields: ctx, id
-func (_m *CategoryRepository) GetCategory(ctx context.Context, id int64) (bookstorebe.Category, error) {
+func (_m *CategoryRepository) GetCategory(ctx context.Context, id int64) (entity.Category, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 bookstorebe.Category
-	if rf, ok := ret.Get(0).(func(context.Context, int64) bookstorebe.Category); ok {
+	var r0 entity.Category
+	if rf, ok := ret.Get(0).(func(context.Context, int64) entity.Category); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(bookstorebe.Category)
+		r0 = ret.Get(0).(entity.Category)
 	}
 
 	var r1 error
@@ -87,11 +87,11 @@ func (_m *CategoryRepository) GetCategory(ctx context.Context, id int64) (bookst
 }
 
 // UpdateCategory provides a mock function with given fields: ctx, id, category
-func (_m *CategoryRepository) UpdateCategory(ctx context.Context, id int64, category *bookstorebe.Category) error {
+func (_m *CategoryRepository) UpdateCategory(ctx context.Context, id int64, category *entity.Category) error {
 	ret := _m.Called(ctx, id, category)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int64, *bookstorebe.Category) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int64, *entity.Category) error); ok {
 		r0 = rf(ctx, id, category)
 	} else {
 		r0 = ret.Error(0)

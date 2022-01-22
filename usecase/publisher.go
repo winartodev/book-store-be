@@ -2,20 +2,29 @@ package usecase
 
 import (
 	"context"
-	bookstorebe "winartodev/book-store-be"
+	"winartodev/book-store-be/entity"
+	"winartodev/book-store-be/repository"
 )
 
-type PublisherUsecase struct {
-	PublisherRepo bookstorebe.PublisherRepository
+type PublisherUsecase interface {
+	GetPublishers(ctx context.Context) ([]entity.Publisher, error)
+	GetPublisher(ctx context.Context, id int64) (entity.Publisher, error)
+	CreatePublisher(ctx context.Context, publisher *entity.Publisher) error
+	UpdatePublisher(ctx context.Context, id int64, publisher *entity.Publisher) error
+	DeletePublisher(ctx context.Context, id int64) error
 }
 
-func NewPublihserUsecase(uc *PublisherUsecase) bookstorebe.PublisherUsecase {
-	return &PublisherUsecase{
-		PublisherRepo: uc.PublisherRepo,
+type PublisherRepository struct {
+	PublisherRepo repository.PublisherRepository
+}
+
+func NewPublihserUsecase(repo *PublisherRepository) PublisherUsecase {
+	return &PublisherRepository{
+		PublisherRepo: repo.PublisherRepo,
 	}
 }
 
-func (uc *PublisherUsecase) GetPublishers(ctx context.Context) ([]bookstorebe.Publisher, error) {
+func (uc *PublisherRepository) GetPublishers(ctx context.Context) ([]entity.Publisher, error) {
 	res, err := uc.PublisherRepo.GetPublishers(ctx)
 	if err != nil {
 		return nil, err
@@ -24,16 +33,16 @@ func (uc *PublisherUsecase) GetPublishers(ctx context.Context) ([]bookstorebe.Pu
 	return res, nil
 }
 
-func (uc *PublisherUsecase) GetPublisher(ctx context.Context, id int64) (bookstorebe.Publisher, error) {
+func (uc *PublisherRepository) GetPublisher(ctx context.Context, id int64) (entity.Publisher, error) {
 	res, err := uc.PublisherRepo.GetPublisher(ctx, id)
 	if err != nil {
-		return bookstorebe.Publisher{}, err
+		return entity.Publisher{}, err
 	}
 
 	return res, nil
 }
 
-func (uc *PublisherUsecase) CreatePublisher(ctx context.Context, publisher *bookstorebe.Publisher) error {
+func (uc *PublisherRepository) CreatePublisher(ctx context.Context, publisher *entity.Publisher) error {
 	err := uc.PublisherRepo.CreatePublisher(ctx, publisher)
 	if err != nil {
 		return err
@@ -42,7 +51,7 @@ func (uc *PublisherUsecase) CreatePublisher(ctx context.Context, publisher *book
 	return nil
 }
 
-func (uc *PublisherUsecase) UpdatePublisher(ctx context.Context, id int64, publisher *bookstorebe.Publisher) error {
+func (uc *PublisherRepository) UpdatePublisher(ctx context.Context, id int64, publisher *entity.Publisher) error {
 	err := uc.PublisherRepo.UpdatePublisher(ctx, id, publisher)
 	if err != nil {
 		return err
@@ -51,7 +60,7 @@ func (uc *PublisherUsecase) UpdatePublisher(ctx context.Context, id int64, publi
 	return nil
 }
 
-func (uc *PublisherUsecase) DeletePublisher(ctx context.Context, id int64) error {
+func (uc *PublisherRepository) DeletePublisher(ctx context.Context, id int64) error {
 	err := uc.PublisherRepo.DeletePublisher(ctx, id)
 	if err != nil {
 		return err
