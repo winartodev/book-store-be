@@ -63,8 +63,5 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:buildcache,mode=max
-
-     
-    
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:v0.0.1
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:v0.0.1,mode=max
