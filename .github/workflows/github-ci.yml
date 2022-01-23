@@ -10,8 +10,8 @@ on:
 
 jobs:
 
-  downnload_depenencies:
-    name: downnload_depenencies
+  downnload-depenencies:
+    name: downnload-depenencies
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repo
@@ -24,7 +24,7 @@ jobs:
 
   test:
     name: test
-    needs: downnload_depenencies
+    needs: downnload-depenencies
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -48,12 +48,14 @@ jobs:
     needs: compile
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: build-and-push
+      - name: build-docker-image
         uses: docker/build-push-action@v2
         with:
           context: ./
@@ -63,3 +65,6 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/book_store_be:buildcache,mode=max
+
+     
+    
