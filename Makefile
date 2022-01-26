@@ -1,6 +1,6 @@
-.PHONY: test build mod create_db remove_db stop_db start_db cover coverage run
+.PHONY: test build mod cover coverage start
 
-run: 
+start: 
 	go run ./...
 
 test: 
@@ -18,37 +18,12 @@ cover:
 
 coverage: 
 	go tool cover -html=cover.out
+
+migration:
+	docker run -d -p 5432:5432 --network bookstore_network --network-alias host --name bookstore_db -e POSTGRES_PASSWORD=postgres -v bookstore_volume:/var/lib/postgresql/data postgres:14
 	
-#  this command for control the databases
-create_db: 
-	cd db; 	echo "Create Database..."; \
-	docker-compose up -d
-
-remove_db:
-	cd db; echo "Database Down..."; \
-	docker-compose down -v
-
-stop_db:
-	cd db; echo "Database Stopped"; \
-	docker-compose stop
-
-start_db: 
-	cd db; echo "Database Started"; \
-	docker-compose start 
-
-# DOCKER
 docker_build: 
-	docker build . -t book-store-be -f deploy/api/Dockerfile
+	docker build . -t book-store-api -f deploy/api/Dockerfile
 
 docker_run: 
-	docker run --name book-store-api -dp 8081:8080 book-store-be
-
-docker_log:
-	docker logs -f book-store-api
-
-docker_remove_container: 
-	docker rm -f book-store
-
-docker_force_all:
-	docker rm -f book-store; \
-	docker rmi book-store-api
+	docker run -d -p 8080:8080 --network bookstore_network -e DATABASE_HOST=host --name book-store-api book-store-api
