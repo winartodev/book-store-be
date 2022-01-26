@@ -41,7 +41,7 @@ func (h *PublsiherHandler) GetPublishers(w http.ResponseWriter, r *http.Request,
 	ctx := r.Context()
 	data, err := h.uc.GetPublishers(ctx)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -59,7 +59,7 @@ func (h *PublsiherHandler) GetPublisher(w http.ResponseWriter, r *http.Request, 
 	ctx := r.Context()
 	data, err := h.uc.GetPublisher(ctx, id)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -82,7 +82,7 @@ func (h *PublsiherHandler) CreatePublisher(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	err := h.uc.CreatePublisher(ctx, &publisher)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -102,7 +102,7 @@ func (h *PublsiherHandler) UpdatePublisher(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	err := h.uc.UpdatePublisher(ctx, id, &publisher)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -115,7 +115,7 @@ func (h *PublsiherHandler) DeletePublisher(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 	err := h.uc.DeletePublisher(ctx, id)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 

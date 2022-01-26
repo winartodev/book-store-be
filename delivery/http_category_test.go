@@ -11,11 +11,16 @@ import (
 	"winartodev/book-store-be/delivery"
 	"winartodev/book-store-be/entity"
 	"winartodev/book-store-be/handler"
+	"winartodev/book-store-be/logger"
 	"winartodev/book-store-be/mocks"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
+
+func init() {
+	logger.Init()
+}
 
 func newCategoryHandler() (http.Handler, *mocks.CategoryUsecase) {
 	uc := new(mocks.CategoryUsecase)
