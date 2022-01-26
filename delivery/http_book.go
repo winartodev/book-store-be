@@ -41,7 +41,7 @@ func (h *BookHandler) GetBooks(w http.ResponseWriter, r *http.Request, _ httprou
 	ctx := r.Context()
 	data, err := h.uc.GetBooks(ctx)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -59,7 +59,7 @@ func (h *BookHandler) GetBook(w http.ResponseWriter, r *http.Request, param http
 	ctx := r.Context()
 	data, err := h.uc.GetBook(ctx, id)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *BookHandler) CreateBook(w http.ResponseWriter, r *http.Request, _ httpr
 	ctx := r.Context()
 	err := h.uc.CreateBook(ctx, &book)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *BookHandler) UpdateBook(w http.ResponseWriter, r *http.Request, param h
 	ctx := r.Context()
 	err := h.uc.UpdateBook(ctx, id, &book)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -116,7 +116,7 @@ func (h *BookHandler) DeleteBook(w http.ResponseWriter, r *http.Request, param h
 	ctx := r.Context()
 	err := h.uc.DeleteBook(ctx, id)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 

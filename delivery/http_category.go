@@ -41,7 +41,7 @@ func (h *CategoryHandler) GetCategories(w http.ResponseWriter, r *http.Request, 
 	ctx := r.Context()
 	data, err := h.uc.GetCategories(ctx)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -59,7 +59,7 @@ func (h *CategoryHandler) GetCategory(w http.ResponseWriter, r *http.Request, pa
 	ctx := r.Context()
 	data, err := h.uc.GetCategory(ctx, id)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -83,7 +83,7 @@ func (h *CategoryHandler) CreateCategory(w http.ResponseWriter, r *http.Request,
 	ctx := r.Context()
 	err := h.uc.CreateCategory(ctx, &category)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *CategoryHandler) UpdateCategory(w http.ResponseWriter, r *http.Request,
 	ctx := r.Context()
 	err := h.uc.UpdateCategory(ctx, id, &category)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -116,7 +116,7 @@ func (h *CategoryHandler) DeleteCategory(w http.ResponseWriter, r *http.Request,
 	ctx := r.Context()
 	err := h.uc.DeleteCategory(ctx, id)
 	if err != nil {
-		response.FailedResponse(w, http.StatusForbidden, "router cannot be empty")
+		response.FailedResponse(w, http.StatusForbidden, err.Error())
 		return
 	}
 

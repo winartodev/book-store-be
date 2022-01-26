@@ -2,7 +2,9 @@ package response
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
+	"winartodev/book-store-be/logger"
 )
 
 type successBody struct {
@@ -45,5 +47,6 @@ func SuccessResponse(w http.ResponseWriter, status int, data interface{}) {
 }
 
 func FailedResponse(w http.ResponseWriter, status int, message string) {
+	logger.Error(errors.New(message), logger.Fields{})
 	Write(w, statusFailed(status, message), status)
 }
