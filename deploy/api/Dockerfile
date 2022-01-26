@@ -15,6 +15,6 @@ RUN go mod download
 
 RUN go build app/main.go
 
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["/book-store-be/main"]
