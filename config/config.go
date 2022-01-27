@@ -8,5 +8,6 @@ type Config struct {
 		Host     string `env:"DATABASE_HOST,default=localhost"`
 		Port     string `env:"DATABASE_PORT,required"`
 		Name     string `env:"DATABASE_NAME,required"`
+		SSL      string `env:"SSL_MODE,default=disable"`
 	}
 }

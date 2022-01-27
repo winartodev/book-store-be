@@ -9,12 +9,13 @@ import (
 
 func NewPostgres(cfg *Config) (*sql.DB, error) {
 	dbConfig := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
+		"password=%s dbname=%s sslmode=%s",
 		cfg.Database.Host,
 		cfg.Database.Port,
 		cfg.Database.Username,
 		cfg.Database.Password,
 		cfg.Database.Name,
+		cfg.Database.SSL,
 	)
 
 	db, err := sql.Open("postgres", dbConfig)
