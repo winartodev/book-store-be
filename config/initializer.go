@@ -38,15 +38,15 @@ func Serve() {
 
 	categoryRepo := repository.NewMysqlCategory(db)
 	categoryUsecase := usecase.NewCategoryUsecase(&usecase.CategoryRepository{CategoryRepo: categoryRepo})
-	categoryHander := delivery.NewCategoryHandler(categoryUsecase)
+	categoryHander := delivery.NewCategoryHandler(categoryUsecase, cfg.BookStoreUsername, cfg.BookStorePassword)
 
 	publisherRepo := repository.NewMysqlPublisher(db)
 	publisherUsecase := usecase.NewPublihserUsecase(&usecase.PublisherRepository{PublisherRepo: publisherRepo})
-	publisherHandler := delivery.NewPublisherHandler(publisherUsecase)
+	publisherHandler := delivery.NewPublisherHandler(publisherUsecase, cfg.BookStoreUsername, cfg.BookStorePassword)
 
 	bookRepo := repository.NewMysqlBook(db)
 	bookUsecase := usecase.NewBookUsecase(&usecase.BookRepository{BookRepo: bookRepo})
-	bookHandler := delivery.NewBookHandler(bookUsecase)
+	bookHandler := delivery.NewBookHandler(bookUsecase, cfg.BookStoreUsername, cfg.BookStorePassword)
 
 	h := handler.NewHandler(&categoryHander, &publisherHandler, &bookHandler)
 
