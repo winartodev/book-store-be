@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"winartodev/book-store-be/middleware"
 	"winartodev/book-store-be/response"
 
 	"github.com/julienschmidt/httprouter"
@@ -14,6 +15,10 @@ type Registration interface {
 
 func NotFound(w http.ResponseWriter, _ *http.Request) {
 	response.Write(w, "endpoint not found", http.StatusNotFound)
+}
+
+func Decorate(handle middleware.HandleWithError, ds ...middleware.Decorator) httprouter.Handle {
+	return middleware.HTTP(middleware.ApplyDecorators(handle, ds...))
 }
 
 func NewHandler(register ...Registration) http.Handler {

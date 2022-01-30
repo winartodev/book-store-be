@@ -1,15 +1,16 @@
 package delivery_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"winartodev/book-store-be/delivery"
 	"winartodev/book-store-be/entity"
+	"winartodev/book-store-be/fixture"
 	"winartodev/book-store-be/handler"
 	"winartodev/book-store-be/logger"
 	"winartodev/book-store-be/mocks"
@@ -23,8 +24,14 @@ func init() {
 }
 
 func newCategoryHandler() (http.Handler, *mocks.CategoryUsecase) {
+	os.Setenv("BOOKSTORE_USERNAME", fixture.DummyUsername)
+	os.Setenv("BOOKSTORE_PASSWORD", fixture.DummyPassword)
+
+	username := fixture.DummyUsername
+	password := fixture.DummyPassword
+
 	uc := new(mocks.CategoryUsecase)
-	category := delivery.NewCategoryHandler(uc)
+	category := delivery.NewCategoryHandler(uc, username, password)
 	h := handler.NewHandler(&category)
 	return h, uc
 }
@@ -66,7 +73,7 @@ func TestGetCategories(t *testing.T) {
 			category.On("GetCategories", mock.Anything).Return(test.category, test.getError)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodGet, test.endpoint, nil)
+			request := fixture.HTTPBasicAuth(http.MethodGet, test.endpoint, fixture.DummyUsername, fixture.DummyPassword, nil)
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusOK)
@@ -111,7 +118,7 @@ func TestGetCategory(t *testing.T) {
 			category.On("GetCategory", mock.Anything, mock.Anything).Return(test.category, test.getError)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/bookstore/category/%v", test.id), nil)
+			request := fixture.HTTPBasicAuth(http.MethodGet, fmt.Sprintf("/bookstore/category/%v", test.id), fixture.DummyUsername, fixture.DummyPassword, nil)
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantErr, recoder.Code != http.StatusOK)
@@ -150,7 +157,7 @@ func TestCreateCategory(t *testing.T) {
 
 			body, _ := json.Marshal(test.category)
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodPost, test.endpoint, bytes.NewBuffer(body))
+			request := fixture.HTTPBasicAuth(http.MethodPost, test.endpoint, fixture.DummyUsername, fixture.DummyPassword, body)
 
 			handler.ServeHTTP(recoder, request)
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusCreated)
@@ -190,7 +197,7 @@ func TestUpdateCategory(t *testing.T) {
 			body, _ := json.Marshal(test.category)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodPut, fmt.Sprintf("/bookstore/category/%d", test.id), bytes.NewBuffer(body))
+			request := fixture.HTTPBasicAuth(http.MethodPut, fmt.Sprintf("/bookstore/category/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, body)
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusOK)
@@ -225,7 +232,8 @@ func TestDeleteCategory(t *testing.T) {
 			category.On("DeleteCategory", mock.Anything, mock.Anything).Return(test.deleteErr)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/bookstore/category/%d", test.id), nil)
+			request := fixture.HTTPBasicAuth(http.MethodDelete, fmt.Sprintf("/bookstore/category/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, nil)
+
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantErr, recoder.Code != http.StatusOK)

@@ -1,15 +1,16 @@
 package delivery_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"winartodev/book-store-be/delivery"
 	"winartodev/book-store-be/entity"
+	"winartodev/book-store-be/fixture"
 	"winartodev/book-store-be/handler"
 	"winartodev/book-store-be/logger"
 	"winartodev/book-store-be/mocks"
@@ -23,9 +24,16 @@ func init() {
 }
 
 func newBookHandler() (http.Handler, *mocks.BookUsecase) {
+	os.Setenv("BOOKSTORE_USERNAME", fixture.DummyUsername)
+	os.Setenv("BOOKSTORE_PASSWORD", fixture.DummyPassword)
+
+	username := fixture.DummyUsername
+	password := fixture.DummyPassword
+
 	uc := new(mocks.BookUsecase)
-	book := delivery.NewBookHandler(uc)
+	book := delivery.NewBookHandler(uc, username, password)
 	h := handler.NewHandler(&book)
+
 	return h, uc
 }
 
@@ -68,7 +76,7 @@ func TestGetBooks(t *testing.T) {
 			book.On("GetBooks", mock.Anything).Return(test.books, test.getError)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodGet, "/bookstore/book", nil)
+			request := fixture.HTTPBasicAuth(http.MethodGet, "/bookstore/book", fixture.DummyUsername, fixture.DummyPassword, nil)
 
 			handler.ServeHTTP(recoder, request)
 
@@ -119,7 +127,7 @@ func TestGetBook(t *testing.T) {
 			book.On("GetBook", mock.Anything, mock.Anything).Return(test.book, test.getErr)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/bookstore/book/%d", test.id), nil)
+			request := fixture.HTTPBasicAuth(http.MethodGet, fmt.Sprintf("/bookstore/book/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, nil)
 
 			handler.ServeHTTP(recoder, request)
 
@@ -169,9 +177,9 @@ func TestCreateBook(t *testing.T) {
 
 		body, _ := json.Marshal(test.book)
 		recoder := httptest.NewRecorder()
-		requset := httptest.NewRequest(http.MethodPost, "/bookstore/book", bytes.NewBuffer(body))
+		request := fixture.HTTPBasicAuth(http.MethodPost, "/bookstore/book", fixture.DummyUsername, fixture.DummyPassword, body)
 
-		handler.ServeHTTP(recoder, requset)
+		handler.ServeHTTP(recoder, request)
 
 		assert.Equal(t, test.wantErr, recoder.Code != http.StatusCreated)
 	}
@@ -222,9 +230,9 @@ func TestUpdateBook(t *testing.T) {
 
 			body, _ := json.Marshal(test.book)
 			recoder := httptest.NewRecorder()
-			requset := httptest.NewRequest(http.MethodPut, fmt.Sprintf("/bookstore/book/%d", test.id), bytes.NewBuffer(body))
+			request := fixture.HTTPBasicAuth(http.MethodPut, fmt.Sprintf("/bookstore/book/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, body)
 
-			handler.ServeHTTP(recoder, requset)
+			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantErr, recoder.Code != http.StatusOK)
 		})
@@ -256,7 +264,7 @@ func TestDeleteBook(t *testing.T) {
 			book.On("DeleteBook", mock.Anything, mock.Anything).Return(test.deleteErr)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/bookstore/book/%d", test.id), nil)
+			request := fixture.HTTPBasicAuth(http.MethodDelete, fmt.Sprintf("/bookstore/book/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, nil)
 
 			handler.ServeHTTP(recoder, request)
 

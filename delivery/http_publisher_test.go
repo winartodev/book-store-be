@@ -1,15 +1,16 @@
 package delivery_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"winartodev/book-store-be/delivery"
 	"winartodev/book-store-be/entity"
+	"winartodev/book-store-be/fixture"
 	"winartodev/book-store-be/handler"
 	"winartodev/book-store-be/logger"
 	"winartodev/book-store-be/mocks"
@@ -23,8 +24,14 @@ func init() {
 }
 
 func newPublisherHandler() (http.Handler, *mocks.PublisherUsecase) {
+	os.Setenv("BOOKSTORE_USERNAME", fixture.DummyUsername)
+	os.Setenv("BOOKSTORE_PASSWORD", fixture.DummyPassword)
+
+	username := fixture.DummyUsername
+	password := fixture.DummyPassword
+
 	uc := new(mocks.PublisherUsecase)
-	publisher := delivery.NewPublisherHandler(uc)
+	publisher := delivery.NewPublisherHandler(uc, username, password)
 	h := handler.NewHandler(&publisher)
 	return h, uc
 }
@@ -66,8 +73,7 @@ func TestGetPublishers(t *testing.T) {
 			publisher.On("GetPublishers", mock.Anything).Return(test.publisher, test.getErr)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodGet, "/bookstore/publisher", nil)
-
+			request := fixture.HTTPBasicAuth(http.MethodGet, "/bookstore/publisher", fixture.DummyUsername, fixture.DummyPassword, nil)
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusOK)
@@ -116,8 +122,7 @@ func TestGetPublisher(t *testing.T) {
 			publisher.On("GetPublisher", mock.Anything, mock.Anything).Return(test.publisher, test.getErr)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/bookstore/publisher/%d", test.id), nil)
-
+			request := fixture.HTTPBasicAuth(http.MethodGet, fmt.Sprintf("/bookstore/publisher/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, nil)
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusOK)
@@ -156,8 +161,7 @@ func TestCreatePublisher(t *testing.T) {
 
 			body, _ := json.Marshal(test.publisher)
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodPost, "/bookstore/publisher", bytes.NewBuffer(body))
-
+			request := fixture.HTTPBasicAuth(http.MethodPost, "/bookstore/publisher", fixture.DummyUsername, fixture.DummyPassword, body)
 			handler.ServeHTTP(recoder, request)
 			fmt.Print(recoder.Body)
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusCreated)
@@ -201,7 +205,7 @@ func TestUpdatePublisher(t *testing.T) {
 
 			body, _ := json.Marshal(test.publisher)
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodPut, fmt.Sprintf("/bookstore/publisher/%d", test.id), bytes.NewBuffer(body))
+			request := fixture.HTTPBasicAuth(http.MethodPut, fmt.Sprintf("/bookstore/publisher/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, body)
 
 			handler.ServeHTTP(recoder, request)
 
@@ -237,8 +241,7 @@ func TestDeletePublisher(t *testing.T) {
 			publisher.On("DeletePublisher", mock.Anything, mock.Anything).Return(test.deleteErr)
 
 			recoder := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/bookstore/publisher/%d", test.id), nil)
-
+			request := fixture.HTTPBasicAuth(http.MethodDelete, fmt.Sprintf("/bookstore/publisher/%d", test.id), fixture.DummyUsername, fixture.DummyPassword, nil)
 			handler.ServeHTTP(recoder, request)
 
 			assert.Equal(t, test.wantError, recoder.Code != http.StatusOK)
